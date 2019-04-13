@@ -1,26 +1,35 @@
-import React, { Component } from 'react';
-import './App.css';
+import React from 'react'
+import Synth from './pages/Synth'
+import Error from './components/Error'
+import Spinner from './components/Spinner'
+import useWebMidi from './hooks/useWebMidi'
+import Layout from './components/Layout'
+import NavBar, { NavItem } from './components/NavBar'
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
+export default function App() {
+  return (
+    <Layout>
+      <NavBar>
+        <NavItem link="/synth">Synth</NavItem>
+        <NavItem link="/synth">MIDI Monitor</NavItem>
+        <NavItem link="/synth">MIDI Player</NavItem>
+      </NavBar>
+      <Midi />
+    </Layout>
+  )
 }
 
-export default App;
+function Midi() {
+  const [webMidiEnabled, webMidiError] = useWebMidi()
+
+  if (webMidiError !== null) {
+    return (
+      <Error error={`Error initializing Web MIDI: ${webMidiError.message}`} />
+    )
+  }
+  if (!webMidiEnabled) {
+    return <Spinner>Enabling WebMidi</Spinner>
+  }
+
+  return <Synth />
+}

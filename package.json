@@ -5,7 +5,10 @@
   "dependencies": {
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-scripts": "2.1.8"
+    "react-scripts": "2.1.8",
+    "styled-components": "^4.2.0",
+    "tone": "^13.4.9",
+    "webmidi": "^2.3.3"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -21,5 +24,8 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "prettier": "^1.16.4"
+  }
 }
