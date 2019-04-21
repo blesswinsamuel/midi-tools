@@ -1,7 +1,10 @@
 import React from 'react'
+import styled from 'styled-components'
 
-export default function Pre(props) {
-  return (
-    <pre {...props} />
-  )
-}
+const StyledPre = styled.pre`
+  background: #f2f2f2;
+`
+
+export default React.forwardRef(function Pre(props, ref) {
+  return <StyledPre ref={ref} {...props} />
+})

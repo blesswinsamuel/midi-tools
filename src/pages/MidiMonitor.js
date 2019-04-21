@@ -103,7 +103,6 @@ export default function MidiMonitor() {
         {Object.keys(eventTypes).map(eventType => (
           <Checkbox
             key={eventType}
-            inline
             checked={selectedEventTypes.includes(eventType)}
             onChange={e => {
               if (e.target.checked) {
@@ -122,7 +121,6 @@ export default function MidiMonitor() {
           channel => (
             <Checkbox
               key={channel}
-              inline
               checked={selectedChannels.includes(channel)}
               onChange={e => {
                 if (e.target.checked) {
@@ -137,7 +135,7 @@ export default function MidiMonitor() {
           )
         )}
       </div>
-      <Pre ref={logRef} style={{ height: '400px', overflowY: 'scroll' }}>
+      <Pre ref={logRef} style={{ height: '500px', overflowY: 'scroll' }}>
         <code>{logs}</code>
       </Pre>
     </div>

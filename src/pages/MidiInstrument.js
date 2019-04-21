@@ -21,7 +21,7 @@ const Divider = 'div'
 
 function DeviceSelector({ setDeviceIds, deviceIds }) {
   return (
-    <ControlGroup fill={true} vertical={false}>
+    <ControlGroup>
       <MidiDeviceSelector
         input
         label="Input"
@@ -168,7 +168,7 @@ function Transport({ timer, outputController, inputController }) {
   return (
     <>
       <br />
-      <Tag large style={{ fontSize: '2em', padding: '.3em' }}>
+      <Tag style={{ fontSize: '2em', padding: '.3em' }}>
         <strong>
           {[
             transportState.bar.toString().padStart(3, '\xa0'),
@@ -378,7 +378,7 @@ export default function Instrument() {
           value={tempo}
           min={32}
           max={240}
-          onValueChange={v => setTempo(v)}
+          onChange={e => setTempo(e.target.value)}
         />
         <Button onClick={tapTempo}>Tap</Button>
         <NumericInput
@@ -388,7 +388,7 @@ export default function Instrument() {
           value={ppq}
           min={1}
           max={1920}
-          onValueChange={v => setPpq(v)}
+          onChange={e => setPpq(e.target.value)}
         />
         <Input
           value={timeSignature.join('/')}

@@ -7,7 +7,6 @@ import Select from '../components/Select'
 import Input from '../components/Input'
 import NumericInput from '../components/NumericInput'
 import Button from '../components/Button'
-import FormField from '../components/FormField'
 
 const options = [
   'playNote',
@@ -258,7 +257,7 @@ const renderMethod = (method, device) => {
           <NumericInput
             id={field}
             value={getState(field)}
-            onValueChange={e => setFieldState(field, e)}
+            onChange={e => setFieldState(field, e.target.value)}
             // min={0}
             // max={127}
           />
@@ -298,13 +297,20 @@ const renderMethod = (method, device) => {
         }
       })}
     >
-      {m.fields.map(field => {
-        return (
-          <FormField key={field} inline label={field} labelFor={field}>
-            {getField(field)}
-          </FormField>
-        )
-      })}
+      <table>
+        <tbody>
+          {m.fields.map(field => {
+            return (
+              <tr key={field}>
+                <td>
+                  <label htmlFor={field}>{field}</label>
+                </td>
+                <td>{getField(field)}</td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
       <Button type="submit">Send</Button>
     </form>
   )
