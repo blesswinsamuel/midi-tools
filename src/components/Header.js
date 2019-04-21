@@ -7,12 +7,20 @@ Styled.NavBar = styled.div`
   display: flex;
   font-size: 1em;
   background: #eee;
+  margin-bottom: 0.5em;
 `
 
-Styled.NavLink = styled(NavLink)`
+Styled.NavLink = styled(NavLink).attrs({ activeClassName: 'active' })`
   display: block;
   padding: 0.75em 0.5em;
+  text-decoration: none;
   background: #eee;
+  color: #000000;
+
+  &.active {
+    background: #000000;
+    color: #ffffff;
+  }
 `
 
 export default function Header() {

@@ -9,9 +9,12 @@ import Button from '../components/Button'
 import NumericInput from '../components/NumericInput'
 import Input from '../components/Input'
 import Slider from '../components/Slider'
+import styled from 'styled-components'
 
 const ButtonGroup = 'div'
-const ControlGroup = 'div'
+const ControlGroup = styled.div`
+  display: flex;
+`
 const Card = 'div'
 const Tag = 'div'
 const Divider = 'div'
@@ -165,10 +168,7 @@ function Transport({ timer, outputController, inputController }) {
   return (
     <>
       <br />
-      <Tag
-        large
-        style={{ fontSize: '2em', padding: '.3em' }}
-      >
+      <Tag large style={{ fontSize: '2em', padding: '.3em' }}>
         <strong>
           {[
             transportState.bar.toString().padStart(3, '\xa0'),
@@ -380,7 +380,7 @@ export default function Instrument() {
           max={240}
           onValueChange={v => setTempo(v)}
         />
-        <Button icon="record" onClick={tapTempo} />
+        <Button onClick={tapTempo}>Tap</Button>
         <NumericInput
           leftIcon="pulse"
           rightElement={<Tag minimal>ppq</Tag>}

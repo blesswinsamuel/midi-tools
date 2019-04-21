@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components'
+import styled, { createGlobalStyle } from 'styled-components'
 import React from 'react'
 import Header from './Header'
 
@@ -6,16 +6,11 @@ const GlobalStyle = createGlobalStyle`
 body {
   margin: 0;
   padding: 0;
-/*  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;*/
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-body, select {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
 }
 
 code {
@@ -24,12 +19,16 @@ code {
 }
 `
 
+const Container = styled.div`
+  margin: 1em;
+`
+
 export default function Layout({ children }) {
   return (
     <>
-      <GlobalStyle/>
-      <Header/>
-      <div>{children}</div>
+      <GlobalStyle />
+      <Header />
+      <Container>{children}</Container>
     </>
   )
 }

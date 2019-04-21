@@ -1,5 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-const Spinner = 'input'
+import styled from 'styled-components'
+
+const StyledKnob = styled.div``
+
 export default function Knob({ max, min, onChange, value }) {
   const [isPinching, setPinching] = useState(false)
   const prevValue = useRef(value)
@@ -72,7 +75,7 @@ export default function Knob({ max, min, onChange, value }) {
       style={{ position: 'relative', cursor: 'grab' }}
       onMouseDown={handleMouseDown}
     >
-      <Spinner
+      <StyledKnob
         intent={isPinching ? 'intent-primary' : 'intent-none'}
         size={40}
         value={(value - min) / (max - min)}

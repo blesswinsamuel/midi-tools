@@ -2,15 +2,24 @@ import React from 'react'
 import styled from 'styled-components'
 
 const StyledButton = styled.button`
-  /* Adapt the colors based on primary prop */
-  background: ${props => (props.primary ? 'palevioletred' : 'white')};
-  color: ${props => (props.primary ? 'white' : 'palevioletred')};
+  background: #fff;
+  color: #000;
 
   font-size: 1em;
-  margin: 1em;
-  padding: 0.25em 1em;
-  border: 2px solid palevioletred;
-  border-radius: 3px;
+  margin: 0.25em;
+  padding: 0.25em;
+  border: 2px solid #000;
+  transition: all ease-in-out .1s;
+  
+  &:hover {
+    background: #000;
+    color: #ffffff;
+  }
+  &:focus {
+    background: #333;
+    color: #ffffff;
+    outline: 0;
+  }
 `
 
 export default function Button(props) {

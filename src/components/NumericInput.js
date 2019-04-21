@@ -1,8 +1,6 @@
 import React from 'react'
+import Input from './Input'
 
 export default function NumericInput(props) {
-  return (
-    <input
-      type="text" {...props} />
-  )
+  return <Input type="number" {...props} />
 }

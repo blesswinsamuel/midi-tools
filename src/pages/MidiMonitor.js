@@ -18,14 +18,14 @@ const eventTypes = {
 
 export default function MidiMonitor() {
   const [logs, setLogs] = useState('')
-  const [tempo, setTempo] = useLocalStorageState('midi:logger:tempo', 100)
-  const [deviceId, setDeviceId] = useLocalStorageState('midi:logger:device', '')
+  const [tempo, setTempo] = useLocalStorageState('midi:monitor:tempo', 100)
+  const [deviceId, setDeviceId] = useLocalStorageState('midi:monitor:device', '')
   const [selectedEventTypes, setEventTypes] = useLocalStorageState(
-    'midi:logger:eventTypes',
+    'midi:monitor:eventTypes',
     ['noteon']
   )
   const [selectedChannels, setChannels] = useLocalStorageState(
-    'midi:logger:channels',
+    'midi:monitor:channels',
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
   )
 
