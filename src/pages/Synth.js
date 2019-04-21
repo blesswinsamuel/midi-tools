@@ -1,23 +1,23 @@
 import React, { useEffect, useRef } from 'react'
 import Tone from 'tone'
 import WebMidi from 'webmidi'
-import MidiSelector from '../app-components/MidiSelector'
+import MidiDeviceSelector from '../app-components/MidiDeviceSelector'
 import useLocalStorageState from '../hooks/useLocalStorageState'
 
 function DeviceSelector({ setDeviceIds, deviceIds }) {
   return (
     <>
-      <MidiSelector
+      <MidiDeviceSelector
+        input
         label="Input"
-        options={WebMidi.inputs}
         value={deviceIds.input}
         onChange={v => {
           setDeviceIds(d => ({ ...d, input: v }))
         }}
       />
-      <MidiSelector
+      <MidiDeviceSelector
+        input
         label="Input Controller"
-        options={WebMidi.inputs}
         value={deviceIds.inputController}
         onChange={v => {
           setDeviceIds(d => ({ ...d, inputController: v }))

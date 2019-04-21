@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import useLocalStorageState from '../hooks/useLocalStorageState'
 import WebMidi from 'webmidi'
 import MidiDeviceProperties from '../app-components/MidiDeviceProperties'
-import MidiSelector from '../app-components/MidiSelector'
+import MidiDeviceSelector from '../app-components/MidiDeviceSelector'
 import Select from '../components/Select'
 import Input from '../components/Input'
 import NumericInput from '../components/NumericInput'
@@ -61,9 +61,9 @@ export default function MidiTransmitter() {
   return (
     <div>
       <div>
-        <MidiSelector
-          label="Input"
-          options={WebMidi.outputs}
+        <MidiDeviceSelector
+          output
+          label="Output"
           value={deviceId}
           onChange={v => setDeviceId(v)}
         />

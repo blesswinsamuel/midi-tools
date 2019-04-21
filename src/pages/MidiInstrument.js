@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef } from 'react'
 import timer from './timer'
 import useLocalStorageState from '../hooks/useLocalStorageState'
 import WebMidi from 'webmidi'
-import MidiSelector from '../app-components/MidiSelector'
+import MidiDeviceSelector from '../app-components/MidiDeviceSelector'
 import useAnimationState from '../hooks/useAnimationState'
 import Knob from '../components/Knob'
 import Button from '../components/Button'
@@ -22,33 +22,33 @@ const Divider = 'div'
 function DeviceSelector({ setDeviceIds, deviceIds }) {
   return (
     <ControlGroup fill={true} vertical={false}>
-      <MidiSelector
+      <MidiDeviceSelector
+        input
         label="Input"
-        options={WebMidi.inputs}
         value={deviceIds.input}
         onChange={v => {
           setDeviceIds(d => ({ ...d, input: v }))
         }}
       />
-      <MidiSelector
+      <MidiDeviceSelector
+        input
         label="Input Controller"
-        options={WebMidi.inputs}
         value={deviceIds.inputController}
         onChange={v => {
           setDeviceIds(d => ({ ...d, inputController: v }))
         }}
       />
-      <MidiSelector
+      <MidiDeviceSelector
+        output
         label="Output Controller"
-        options={WebMidi.outputs}
         value={deviceIds.outputController}
         onChange={v => {
           setDeviceIds(d => ({ ...d, outputController: v }))
         }}
       />
-      <MidiSelector
+      <MidiDeviceSelector
+        output
         label="Output"
-        options={WebMidi.outputs}
         value={deviceIds.output}
         onChange={v => {
           setDeviceIds(d => ({ ...d, output: v }))

@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import useLocalStorageState from '../hooks/useLocalStorageState'
 import WebMidi from 'webmidi'
-import MidiSelector from '../app-components/MidiSelector'
+import MidiDeviceSelector from '../app-components/MidiDeviceSelector'
 import Button from '../components/Button'
 import Checkbox from '../components/Checkbox'
 import NumericInput from '../components/NumericInput'
@@ -82,9 +82,9 @@ export default function MidiMonitor() {
   return (
     <div>
       <div>
-        <MidiSelector
+        <MidiDeviceSelector
+          input
           label="Input"
-          options={WebMidi.inputs}
           value={deviceId}
           onChange={v => setDeviceId(v)}
         />
