@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import useThrottle from './useThrottle'
 
-const PREFIX = 'songs:'
+const PREFIX = 'midi:'
 
 const ls = {
   getItem(key, defaultValue) {

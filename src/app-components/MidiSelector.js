@@ -6,12 +6,9 @@ export default function MidiSelector({ label, options, value, onChange }) {
     <Select
       value={value}
       onChange={event => onChange(event.currentTarget.value)}
-    >
-      {[{ id: '', name: `Select ${label}...` }, ...options].map(option => (
-        <option key={option.id} value={option.id}>
-          {option.name}
-        </option>
-      ))}
-    </Select>
+      options={[{ id: '', name: `Select ${label}...` }, ...options]}
+      valueKey={opt => opt.id}
+      labelKey={opt => opt.name}
+    />
   )
 }

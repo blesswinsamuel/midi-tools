@@ -1,5 +1,6 @@
 import { createGlobalStyle } from 'styled-components'
 import React from 'react'
+import Header from './Header'
 
 const GlobalStyle = createGlobalStyle`
 body {
@@ -26,7 +27,8 @@ code {
 export default function Layout({ children }) {
   return (
     <>
-      <GlobalStyle />
+      <GlobalStyle/>
+      <Header/>
       <div>{children}</div>
     </>
   )

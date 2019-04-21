@@ -35,7 +35,7 @@ export default function Synth() {
   }
 
   const [deviceIds, setDeviceIds] = useLocalStorageState(
-    'midi:instrument:devices',
+    'instrument:devices',
     {}
   )
   const devices = {
