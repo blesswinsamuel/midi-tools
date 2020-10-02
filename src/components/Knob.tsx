@@ -1,12 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import styled from 'styled-components'
 
-const StyledKnob = styled.div``
-
-export default function Knob({ max, min, onChange, value }) {
+export default function Knob({ max, min, onChange, value, stepSize }) {
   const [isPinching, setPinching] = useState(false)
   const prevValue = useRef(value)
-  const divRef = useRef()
+  const divRef = useRef<any>()
   const xyRef = useRef({ x: 0, y: 0 })
 
   const getXY = useCallback(
@@ -75,10 +72,10 @@ export default function Knob({ max, min, onChange, value }) {
       style={{ position: 'relative', cursor: 'grab' }}
       onMouseDown={handleMouseDown}
     >
-      <StyledKnob
-        intent={isPinching ? 'intent-primary' : 'intent-none'}
-        size={40}
-        value={(value - min) / (max - min)}
+      <div
+      // intent={isPinching ? 'intent-primary' : 'intent-none'}
+      // size={40}
+      // value={(value - min) / (max - min)}
       />
       <div
         style={{
