@@ -1,3 +1,4 @@
+import { Intent, Spinner } from '@blueprintjs/core'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 export default function Knob({ max, min, onChange, value, stepSize }) {
@@ -72,10 +73,10 @@ export default function Knob({ max, min, onChange, value, stepSize }) {
       style={{ position: 'relative', cursor: 'grab' }}
       onMouseDown={handleMouseDown}
     >
-      <div
-      // intent={isPinching ? 'intent-primary' : 'intent-none'}
-      // size={40}
-      // value={(value - min) / (max - min)}
+      <Spinner
+        value={(value - min) / (max - min)}
+        intent={isPinching ? Intent.PRIMARY : Intent.NONE}
+        size={40}
       />
       <div
         style={{

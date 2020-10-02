@@ -9,7 +9,12 @@ function timer() {
   let bpm
   let ppq
   let timeSignature
-  let state = {}
+  let state: { clock: number; beat: number; bar: number; playing: boolean } = {
+    bar: 0,
+    beat: 0,
+    clock: 0,
+    playing: false,
+  }
   let listeners = []
 
   function setOptions(options) {

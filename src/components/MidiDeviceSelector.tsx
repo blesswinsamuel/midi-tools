@@ -4,14 +4,18 @@ import WebMidi from 'webmidi'
 import useWebMidiDevices from './hooks/useWebMidiDevices'
 
 type MidiDeviceSelectorProps = {
-  label: any
+  label: string
   mode?: 'input' | 'output'
-  output: any
   value: any
   onChange: any
 }
 
-export default function MidiDeviceSelector({ label, mode, value, onChange }) {
+export default function MidiDeviceSelector({
+  label,
+  mode,
+  value,
+  onChange,
+}: MidiDeviceSelectorProps) {
   useWebMidiDevices()
   const options = (() => {
     switch (mode) {

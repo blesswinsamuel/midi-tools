@@ -1,29 +1,28 @@
 import React, { useCallback, useEffect, useRef } from 'react'
-import timer from './timer'
-import useLocalStorageState from '../hooks/useLocalStorageState'
+import timer from '../components/timer'
+import useLocalStorageState from '../components/hooks/useLocalStorageState'
 import WebMidi from 'webmidi'
-import MidiDeviceSelector from '../app-components/MidiDeviceSelector'
-import useAnimationState from '../hooks/useAnimationState'
+import MidiDeviceSelector from '../components/MidiDeviceSelector'
+import useAnimationState from '../components/hooks/useAnimationState'
 import Knob from '../components/Knob'
-import Button from '../components/Button'
-import NumericInput from '../components/NumericInput'
-import Input from '../components/Input'
-import Slider from '../components/Slider'
-import styled from 'styled-components'
-
-const ButtonGroup = 'div'
-const ControlGroup = styled.div`
-  display: flex;
-`
-const Card = 'div'
-const Tag = 'div'
-const Divider = 'div'
+import {
+  Button,
+  ButtonGroup,
+  Card,
+  ControlGroup,
+  Divider,
+  InputGroup,
+  Intent,
+  NumericInput,
+  Slider,
+  Tag,
+} from '@blueprintjs/core'
 
 function DeviceSelector({ setDeviceIds, deviceIds }) {
   return (
     <ControlGroup>
       <MidiDeviceSelector
-        input
+        mode="input"
         label="Input"
         value={deviceIds.input}
         onChange={v => {
@@ -31,7 +30,7 @@ function DeviceSelector({ setDeviceIds, deviceIds }) {
         }}
       />
       <MidiDeviceSelector
-        input
+        mode="input"
         label="Input Controller"
         value={deviceIds.inputController}
         onChange={v => {
@@ -39,7 +38,7 @@ function DeviceSelector({ setDeviceIds, deviceIds }) {
         }}
       />
       <MidiDeviceSelector
-        output
+        mode="output"
         label="Output Controller"
         value={deviceIds.outputController}
         onChange={v => {
@@ -47,7 +46,7 @@ function DeviceSelector({ setDeviceIds, deviceIds }) {
         }}
       />
       <MidiDeviceSelector
-        output
+        mode="output"
         label="Output"
         value={deviceIds.output}
         onChange={v => {
@@ -126,7 +125,7 @@ function Transport({ timer, outputController, inputController }) {
       if (!outputController) return
       outputController.sendControlChange(41, playing ? 127 : 0, 1, { time })
     }
-    enablePlayingLight(false)
+    enablePlayingLight(false, null)
     return timer.subscribe((time, { bar, beat, clock, playing }) => {
       enablePlayingLight(playing, time)
       if (!playing) {
@@ -183,7 +182,7 @@ function Transport({ timer, outputController, inputController }) {
         <Button
           icon="play"
           onClick={play}
-          intent={transportState.playing ? 'intent-success' : undefined}
+          intent={transportState.playing ? Intent.SUCCESS : undefined}
           active={transportState.playing}
         >
           Play
@@ -333,10 +332,10 @@ export default function Instrument() {
   }
   const [tempo, setTempo] = useLocalStorageState('midi:instrument:tempo', 100)
   const [ppq, setPpq] = useLocalStorageState('midi:instrument:ppq', 96)
-  const [timeSignature, setTimeSignature] = useLocalStorageState(
-    'midi:instrument:timeSignature',
-    [4, 4]
-  )
+  const [
+    timeSignature,
+    setTimeSignature,
+  ] = useLocalStorageState('midi:instrument:timeSignature', [4, 4])
   const { input, inputController, outputController, output } = devices
   const timerRef = useRef(null)
   if (timerRef.current === null) {
@@ -365,7 +364,6 @@ export default function Instrument() {
   }, [tapTempo, inputController])
 
   usePlayer(timerRef.current, output, tempo, ppq)
-
   return (
     <div>
       <DeviceSelector deviceIds={deviceIds} setDeviceIds={setDeviceIds} />
@@ -378,7 +376,7 @@ export default function Instrument() {
           value={tempo}
           min={32}
           max={240}
-          onChange={e => setTempo(e.target.value)}
+          onValueChange={v => setTempo(v)}
         />
         <Button onClick={tapTempo}>Tap</Button>
         <NumericInput
@@ -388,9 +386,9 @@ export default function Instrument() {
           value={ppq}
           min={1}
           max={1920}
-          onChange={e => setPpq(e.target.value)}
+          onValueChange={v => setPpq(v)}
         />
-        <Input
+        <InputGroup
           value={timeSignature.join('/')}
           min={1}
           max={12}
@@ -399,7 +397,9 @@ export default function Instrument() {
               e.target.value
                 .split('/')
                 .slice(0, 2)
-                .map(i => (i === '' || isNaN(i) ? 0 : parseInt(i)))
+                .map(i =>
+                  i === '' || isNaN((i as unknown) as number) ? 0 : parseInt(i)
+                )
             )
           }
         />

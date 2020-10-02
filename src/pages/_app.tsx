@@ -1,11 +1,24 @@
 // import App from "next/app";
-import type { AppProps /*, AppContext */ } from 'next/app'
+import { AppProps /*, AppContext */ } from 'next/app'
 import Layout from '../components/Layout'
 import NoSSR from '../components/NoSSR'
+import Head from 'next/head'
 import '../styles/tailwind.css'
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <NoSSR><Layout><Component {...pageProps} /></Layout></NoSSR>
+  return (
+    <>
+      <Head>
+        <title>MIDI Tools</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
+      <NoSSR>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </NoSSR>
+    </>
+  )
 }
 
 // Only uncomment this method if you have blocking data requirements for

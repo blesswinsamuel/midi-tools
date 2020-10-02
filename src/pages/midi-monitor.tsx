@@ -2,9 +2,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
 import WebMidi from 'webmidi'
 import MidiDeviceSelector from '../components/MidiDeviceSelector'
-import Button from '../components/Button'
-import Checkbox from '../components/Checkbox'
-import NumericInput from '../components/NumericInput'
+import { Button, Checkbox, ControlGroup, NumericInput } from '@blueprintjs/core'
 
 const eventTypes = {
   activesensing: (e: any) => '',
@@ -106,7 +104,7 @@ export default function MidiMonitor() {
   }, [logs])
   return (
     <div>
-      <div>
+      <ControlGroup>
         <MidiDeviceSelector
           mode="input"
           label="Input"
@@ -123,14 +121,15 @@ export default function MidiMonitor() {
           onChange={(e: { target: { value: any } }) => setTempo(e.target.value)}
         />
         <Button onClick={clear}>Clear</Button>
-      </div>
+      </ControlGroup>
       <div>
         {Object.keys(eventTypes).map(eventType => (
           <Checkbox
             key={eventType}
+            inline={true}
             checked={selectedEventTypes.includes(eventType)}
-            onChange={(e: { target: { checked: any } }) => {
-              if (e.target.checked) {
+            onChange={e => {
+              if ((e.target as HTMLInputElement).checked) {
                 setEventTypes((t: any) => [...t, eventType])
               } else {
                 setEventTypes((t: any[]) =>
@@ -148,9 +147,10 @@ export default function MidiMonitor() {
           channel => (
             <Checkbox
               key={channel}
+              inline={true}
               checked={selectedChannels.includes(channel)}
-              onChange={(e: { target: { checked: any } }) => {
-                if (e.target.checked) {
+              onChange={e => {
+                if ((e.target as HTMLInputElement).checked) {
                   setChannels((ch: any) => [...ch, channel])
                 } else {
                   setChannels((ch: any[]) =>
