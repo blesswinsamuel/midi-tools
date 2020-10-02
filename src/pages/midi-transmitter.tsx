@@ -1,12 +1,10 @@
 import React, { useState } from 'react'
-import useLocalStorageState from '../hooks/useLocalStorageState'
+import useLocalStorageState from '../components/hooks/useLocalStorageState'
 import WebMidi from 'webmidi'
-import MidiDeviceProperties from '../app-components/MidiDeviceProperties'
-import MidiDeviceSelector from '../app-components/MidiDeviceSelector'
+import MidiDeviceProperties from '../components/MidiDeviceProperties'
+import MidiDeviceSelector from '../components/MidiDeviceSelector'
 import Select from '../components/Select'
-import Input from '../components/Input'
-import NumericInput from '../components/NumericInput'
-import Button from '../components/Button'
+import { Button, InputGroup, NumericInput } from '@blueprintjs/core'
 
 const options = [
   'playNote',
@@ -61,7 +59,7 @@ export default function MidiTransmitter() {
     <div>
       <div>
         <MidiDeviceSelector
-          output
+          mode="output"
           label="Output"
           value={deviceId}
           onChange={v => setDeviceId(v)}
@@ -220,7 +218,7 @@ const renderMethod = (method, device) => {
     switch (fieldType) {
       case 'stringOrNumberOrArray':
         return (
-          <Input
+          <InputGroup
             id={field}
             value={getState(field)}
             onChange={e => setFieldState(field, e.target.value.split(','))}
@@ -228,7 +226,7 @@ const renderMethod = (method, device) => {
         )
       case 'numberOrArray':
         return (
-          <Input
+          <InputGroup
             id={field}
             value={getState(field)}
             onChange={e =>
@@ -241,7 +239,7 @@ const renderMethod = (method, device) => {
         )
       case 'stringOrNumber':
         return (
-          <Input
+          <InputGroup
             id={field}
             value={getState(field)}
             onChange={e =>
@@ -266,7 +264,7 @@ const renderMethod = (method, device) => {
       case 'boolean':
       case 'string':
         return (
-          <Input
+          <InputGroup
             id={field}
             value={getState(field)}
             onChange={e => setFieldState(field, e.target.value)}
