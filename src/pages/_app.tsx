@@ -3,6 +3,7 @@ import { AppProps /*, AppContext */ } from 'next/app'
 import Layout from '../components/Layout'
 import NoSSR from '../components/NoSSR'
 import Head from 'next/head'
+import '../styles/blueprint.css'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
