@@ -1,79 +1,93 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import useWebMidi from './hooks/useWebMidi'
 import Spinner from './Spinner'
 import Error from './Error'
+import { HiMenu, HiX } from 'react-icons/hi'
+import { classNames } from './classNames'
+import { useRouter } from 'next/router'
 
-// const GlobalStyle = createGlobalStyle`
-// body {
-//   margin: 0;
-//   padding: 0;
-//   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-//     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-//     sans-serif;
-//   -webkit-font-smoothing: antialiased;
-//   -moz-osx-font-smoothing: grayscale;
-// }
+function NavBar({
+  menuItems,
+}: {
+  menuItems: { title: string; href: string }[]
+}) {
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const router = useRouter()
 
-// code {
-//   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-//     monospace;
-// }
-// `
+  const normalMenuItem = ({ href, title }) => {
+    const activeStyle =
+      'ml-4 px-3 py-2 rounded-md text-sm font-medium leading-5 text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700 transition duration-150 ease-in-out'
+    const normalStyle =
+      'ml-4 px-3 py-2 rounded-md text-sm font-medium leading-5 text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700 transition duration-150 ease-in-out'
 
-// const Container = styled.div`
-//   margin: 1em;
-// `
+    const style = router.pathname == href ? activeStyle : normalStyle
+    return (
+      <Link key={href} href={href}>
+        <a className={style}>{title}</a>
+      </Link>
+    )
+  }
 
-// Styled.NavBar = styled.div`
-//   display: flex;
-//   font-size: 1em;
-//   background: #eee;
-//   margin-bottom: 0.5em;
-// `
+  const mobileMenuItem = ({ href, title }) => {
+    const activeStyle =
+      'mt-1 block px-3 py-2 rounded-md text-base font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700 transition duration-150 ease-in-out'
+    const normalStyle =
+      'mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700 transition duration-150 ease-in-out'
 
-// Styled.NavLink = styled(NavLink).attrs({ activeClassName: 'active' })`
-//   display: block;
-//   padding: 0.75em 0.5em;
-//   text-decoration: none;
-//   background: #eee;
-//   color: #000000;
+    const style = router.pathname == href ? activeStyle : normalStyle
+    return (
+      <Link key={href} href={href}>
+        <a className={style}>{title}</a>
+      </Link>
+    )
+  }
 
-//   &.active {
-//     background: #000000;
-//     color: #ffffff;
-//   }
-// `
-
-function NavBar({ children }) {
   return (
-    <nav className="nav flex flex-wrap items-center justify-between px-4">
-      <div className="flex flex-no-shrink items-center mr-6 py-3 text-grey-darkest">
-        <span className="font-semibold text-xl tracking-tight">MIDI Tools</span>
+    <nav className="bg-gray-800">
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+        <div className="relative flex items-center justify-between h-16">
+          <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+            <button
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white transition duration-150 ease-in-out"
+              aria-label="Main menu"
+              aria-expanded="false"
+            >
+              {!isMobileMenuOpen && (
+                <HiMenu
+                  className="h-6 w-6"
+                  onClick={() => setMobileMenuOpen(true)}
+                />
+              )}
+              {isMobileMenuOpen && (
+                <HiX
+                  className="h-6 w-6"
+                  onClick={() => setMobileMenuOpen(false)}
+                />
+              )}
+            </button>
+          </div>
+          <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
+            <div className="flex-shrink-0">
+              <div className="ml-4 px-3 py-2 text-lg font-medium leading-5 text-white">
+                MIDI Tools
+              </div>
+            </div>
+            <div className="hidden sm:block sm:ml-6">
+              <div className="flex">
+                {menuItems.map(menuItem => normalMenuItem(menuItem))}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {children}
+      <div className={classNames('sm:hidden', !isMobileMenuOpen && 'hidden')}>
+        <div className="px-2 pt-2 pb-3">
+          {menuItems.map(menuItem => mobileMenuItem(menuItem))}
+        </div>
+      </div>
     </nav>
-  )
-}
-
-function NavMenu({ children }) {
-  return (
-    <ul className="menu border-b md:border-none flex justify-end list-reset m-0 w-full md:w-auto">
-      {children}
-    </ul>
-  )
-}
-
-function NavItem({ href, children }) {
-  return (
-    <li className="border-t md:border-none">
-      <Link href={href}>
-        <a className="block md:inline-block px-4 py-3 no-underline text-grey-darkest hover:text-grey-darker font-bold">
-          {children}
-        </a>
-      </Link>
-    </li>
   )
 }
 
@@ -91,14 +105,14 @@ export default function Layout({ children }) {
 
   return (
     <>
-      <NavBar>
-        <NavMenu>
-          <NavItem href="/synth">Synth</NavItem>
-          <NavItem href="/midi-monitor">MIDI Monitor</NavItem>
-          <NavItem href="/transmitter">MIDI Transmitter</NavItem>
-          <NavItem href="/player">MIDI Player</NavItem>
-        </NavMenu>
-      </NavBar>
+      <NavBar
+        menuItems={[
+          { href: '/synth', title: 'Synth' },
+          { href: '/midi-monitor', title: 'MIDI Monitor' },
+          { href: '/transmitter', title: 'MIDI Transmitter' },
+          { href: '/player', title: 'MIDI Player' },
+        ]}
+      />
       <div className="m-4">{children}</div>
     </>
   )

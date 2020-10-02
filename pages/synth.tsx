@@ -1,14 +1,14 @@
 import React, { useEffect, useRef } from 'react'
 import Tone from 'tone'
 import WebMidi from 'webmidi'
-import MidiDeviceSelector from '../app-components/MidiDeviceSelector'
-import useLocalStorageState from '../hooks/useLocalStorageState'
+import MidiDeviceSelector from '../components/MidiDeviceSelector'
+import useLocalStorageState from '../components/hooks/useLocalStorageState'
 
 function DeviceSelector({ setDeviceIds, deviceIds }) {
   return (
     <>
       <MidiDeviceSelector
-        input
+        mode="input"
         label="Input"
         value={deviceIds.input}
         onChange={v => {
@@ -16,7 +16,7 @@ function DeviceSelector({ setDeviceIds, deviceIds }) {
         }}
       />
       <MidiDeviceSelector
-        input
+        mode="input"
         label="Input Controller"
         value={deviceIds.inputController}
         onChange={v => {
@@ -56,6 +56,7 @@ export default function Synth() {
     devices.input.addListener('noteon', 'all', listener)
     devices.input.addListener('noteoff', 'all', listener)
     return () => {
+      if (!devices.input) return
       devices.input.removeListener('noteon', 'all', listener)
       devices.input.removeListener('noteoff', 'all', listener)
     }
