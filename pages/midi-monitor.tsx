@@ -1,33 +1,54 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import useLocalStorageState from '../hooks/useLocalStorageState'
+import useLocalStorageState from '../components/hooks/useLocalStorageState'
 import WebMidi from 'webmidi'
-import MidiDeviceSelector from '../app-components/MidiDeviceSelector'
+import MidiDeviceSelector from '../components/MidiDeviceSelector'
 import Button from '../components/Button'
 import Checkbox from '../components/Checkbox'
 import NumericInput from '../components/NumericInput'
-import Pre from '../components/Pre'
 
 const eventTypes = {
-  activesensing: e => '',
-  clock: e => '',
-  controlchange: e =>
+  activesensing: (e: any) => '',
+  clock: (e: any) => '',
+  controlchange: (e: { controller: { number: any; name: any }; value: any }) =>
     [e.controller.number, e.controller.name, e.value].join(' '),
-  noteon: e => [e.note.name + e.note.octave, e.rawVelocity].join(' '),
-  noteoff: e => [e.note.name + e.note.octave, e.rawVelocity].join(' '),
+  noteon: (e: { note: { name: any; octave: any }; rawVelocity: any }) =>
+    [e.note.name + e.note.octave, e.rawVelocity].join(' '),
+  noteoff: (e: { note: { name: any; octave: any }; rawVelocity: any }) =>
+    [e.note.name + e.note.octave, e.rawVelocity].join(' '),
 }
 
 export default function MidiMonitor() {
   const [logs, setLogs] = useState('')
   const [tempo, setTempo] = useLocalStorageState('midi:monitor:tempo', 100)
-  const [deviceId, setDeviceId] = useLocalStorageState('midi:monitor:device', '')
-  const [selectedEventTypes, setEventTypes] = useLocalStorageState(
-    'midi:monitor:eventTypes',
-    ['noteon']
+  const [deviceId, setDeviceId] = useLocalStorageState(
+    'midi:monitor:device',
+    ''
   )
-  const [selectedChannels, setChannels] = useLocalStorageState(
-    'midi:monitor:channels',
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
-  )
+  const [
+    selectedEventTypes,
+    setEventTypes,
+  ] = useLocalStorageState('midi:monitor:eventTypes', ['noteon'])
+  const [
+    selectedChannels,
+    setChannels,
+  ] = useLocalStorageState('midi:monitor:channels', [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+  ])
 
   const device = WebMidi.getInputById(deviceId)
 
@@ -38,7 +59,11 @@ export default function MidiMonitor() {
   }
 
   useEffect(() => {
-    const listener = e => {
+    const listener = (e: {
+      type: string
+      timestamp: number
+      channel: { toString: () => string }
+    }) => {
       const getMessage = eventTypes[e.type]
       if (!getMessage) {
         console.warn(`No getMessage function for ${e.type}`)
@@ -62,18 +87,18 @@ export default function MidiMonitor() {
       )
     }
     if (device) {
-      selectedEventTypes.forEach(eventType => {
+      selectedEventTypes.forEach((eventType: any) => {
         device.addListener(eventType, selectedChannels, listener)
       })
       return () => {
-        selectedEventTypes.forEach(eventType => {
+        selectedEventTypes.forEach((eventType: any) => {
           device.removeListener(eventType, selectedChannels, listener)
         })
       }
     }
   }, [selectedEventTypes, selectedChannels, device])
 
-  const logRef = useRef()
+  const logRef = useRef<HTMLPreElement | null>()
   useLayoutEffect(() => {
     if (logRef.current) {
       logRef.current.scrollTop = logRef.current.scrollHeight
@@ -83,10 +108,10 @@ export default function MidiMonitor() {
     <div>
       <div>
         <MidiDeviceSelector
-          input
+          mode="input"
           label="Input"
           value={deviceId}
-          onChange={v => setDeviceId(v)}
+          onChange={(v: any) => setDeviceId(v)}
         />
         <NumericInput
           leftIcon="time"
@@ -95,7 +120,7 @@ export default function MidiMonitor() {
           value={tempo}
           min={32}
           max={240}
-          onChange={e => setTempo(e.target.value)}
+          onChange={(e: { target: { value: any } }) => setTempo(e.target.value)}
         />
         <Button onClick={clear}>Clear</Button>
       </div>
@@ -104,11 +129,13 @@ export default function MidiMonitor() {
           <Checkbox
             key={eventType}
             checked={selectedEventTypes.includes(eventType)}
-            onChange={e => {
+            onChange={(e: { target: { checked: any } }) => {
               if (e.target.checked) {
-                setEventTypes(t => [...t, eventType])
+                setEventTypes((t: any) => [...t, eventType])
               } else {
-                setEventTypes(t => t.filter(e => e !== eventType))
+                setEventTypes((t: any[]) =>
+                  t.filter((e: string) => e !== eventType)
+                )
               }
             }}
           >
@@ -122,11 +149,13 @@ export default function MidiMonitor() {
             <Checkbox
               key={channel}
               checked={selectedChannels.includes(channel)}
-              onChange={e => {
+              onChange={(e: { target: { checked: any } }) => {
                 if (e.target.checked) {
-                  setChannels(ch => [...ch, channel])
+                  setChannels((ch: any) => [...ch, channel])
                 } else {
-                  setChannels(ch => ch.filter(e => e !== channel))
+                  setChannels((ch: any[]) =>
+                    ch.filter((e: number) => e !== channel)
+                  )
                 }
               }}
             >
@@ -135,9 +164,13 @@ export default function MidiMonitor() {
           )
         )}
       </div>
-      <Pre ref={logRef} style={{ height: '500px', overflowY: 'scroll' }}>
+      <pre
+        ref={logRef}
+        className="bg-gray"
+        style={{ height: '500px', overflowY: 'scroll' }}
+      >
         <code>{logs}</code>
-      </Pre>
+      </pre>
     </div>
   )
 }
