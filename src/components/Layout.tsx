@@ -1,35 +1,46 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Link from 'next/link'
-import useWebMidi from './hooks/useWebMidi'
-import Spinner from './Spinner'
-import Error from './Error'
 import { useRouter } from 'next/router'
 import { Alignment, Button, Classes, Navbar } from '@blueprintjs/core'
+import { classNames } from './classNames'
 
 function NavBar({
   menuItems,
 }: {
   menuItems: { title: string; href: string }[]
 }) {
-  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false)
   const router = useRouter()
 
   const renderMenuItem = ({ href, title }) => {
     return (
       <Link key={href} href={href}>
-        <Button
-          className="bp3-minimal"
-          active={router.pathname == href}
-          text={title}
-        />
+        <a
+          className={classNames(
+            Classes.MINIMAL,
+            Classes.BUTTON,
+            router.pathname == href && Classes.ACTIVE
+          )}
+        >
+          {title}
+        </a>
       </Link>
     )
   }
 
   return (
     <Navbar>
-      <Navbar.Group align={Alignment.LEFT}>
-        <Navbar.Heading>MIDI Tools</Navbar.Heading>
+      <Navbar.Group
+        align="center"
+        style={{ maxWidth: '1100px', margin: 'auto', padding: '0 1em' }}
+      >
+        <Link href="/">
+          <a
+            className={Classes.NAVBAR_HEADING}
+            style={{ textDecoration: 'none' }}
+          >
+            MIDI Tools
+          </a>
+        </Link>
         <Navbar.Divider />
         {menuItems.map(menuItem => renderMenuItem(menuItem))}
       </Navbar.Group>
@@ -38,17 +49,6 @@ function NavBar({
 }
 
 export default function Layout({ children }) {
-  const [webMidiEnabled, webMidiError] = useWebMidi()
-
-  if (webMidiError !== null) {
-    return (
-      <Error error={`Error initializing Web MIDI: ${webMidiError.message}`} />
-    )
-  }
-  if (!webMidiEnabled) {
-    return <Spinner>Enabling WebMidi</Spinner>
-  }
-
   return (
     <>
       <NavBar
@@ -59,7 +59,9 @@ export default function Layout({ children }) {
           { href: '/midi-player', title: 'MIDI Player' },
         ]}
       />
-      <div style={{ maxWidth: '1100px', margin: '1em auto' }}>{children}</div>
+      <div style={{ maxWidth: '1100px', margin: '1em auto', padding: '0 1em' }}>
+        {children}
+      </div>
     </>
   )
 }
