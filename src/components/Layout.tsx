@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Alignment, Button, Classes, Navbar } from '@blueprintjs/core'
@@ -36,7 +36,7 @@ function NavBar({
         <Link href="/">
           <a
             className={Classes.NAVBAR_HEADING}
-            style={{ textDecoration: 'none' }}
+            style={{ textDecoration: 'none', color: 'white' }}
           >
             MIDI Tools
           </a>
@@ -49,6 +49,12 @@ function NavBar({
 }
 
 export default function Layout({ children }) {
+  useEffect(() => {
+    document.body.classList.add(Classes.DARK)
+    return () => {
+      document.body.classList.remove(Classes.DARK)
+    }
+  }, [])
   return (
     <>
       <NavBar

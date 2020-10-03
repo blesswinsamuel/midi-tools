@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react'
 import Tone from 'tone'
 import WebMidi, { InputEventChannelBase } from 'webmidi'
-import MidiDeviceSelector from '../components/MidiDeviceSelector'
-import useLocalStorageState from '../components/hooks/useLocalStorageState'
+import MidiDeviceSelector from '../MidiDeviceSelector'
+import useLocalStorageState from '../hooks/useLocalStorageState'
 
 export default function MidiRouter() {
   const synth = useRef(null)

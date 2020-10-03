@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
 import WebMidi from 'webmidi'
-import MidiDeviceProperties from '../components/MidiDeviceProperties'
 import MidiDeviceSelector from '../components/MidiDeviceSelector'
 import Select from '../components/Select'
 import { Button, InputGroup, NumericInput } from '@blueprintjs/core'
@@ -65,7 +64,6 @@ export default function MidiTransmitter() {
           onChange={v => setDeviceId(v)}
         />
       </div>
-      <MidiDeviceProperties device={device} />
       <Select
         options={['', ...options]}
         value={method}
