@@ -1,5 +1,6 @@
 // import App from "next/app";
 import { AppProps /*, AppContext */ } from 'next/app'
+import { WebMidiProvider } from '../components/WebMidi'
 import Layout from '../components/Layout'
 import NoSSR from '../components/NoSSR'
 import Head from 'next/head'
@@ -13,9 +14,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <NoSSR>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <WebMidiProvider>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </WebMidiProvider>
       </NoSSR>
     </>
   )

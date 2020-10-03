@@ -8,6 +8,6 @@
 //   padding: 0.25em 1em;
 // `;
 
-export default function Error({ error }) {
+export default function AppError({ error }) {
   return <div>{error}</div>
 }

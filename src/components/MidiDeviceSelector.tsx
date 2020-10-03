@@ -1,7 +1,6 @@
 import React from 'react'
+import { useWebMidiDevices } from './WebMidi'
 import Select from './Select'
-import WebMidi from 'webmidi'
-import useWebMidiDevices from './hooks/useWebMidiDevices'
 
 type MidiDeviceSelectorProps = {
   label: string
@@ -16,15 +15,8 @@ export default function MidiDeviceSelector({
   value,
   onChange,
 }: MidiDeviceSelectorProps) {
-  useWebMidiDevices()
-  const options = (() => {
-    switch (mode) {
-      case 'input':
-        return WebMidi.inputs
-      case 'output':
-        return WebMidi.outputs
-    }
-  })()
+  const devices = useWebMidiDevices()
+  const options = devices[mode + 's']
   return (
     <Select
       value={value}

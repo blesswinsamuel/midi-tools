@@ -1,3 +1,11 @@
+import { Card, H5 } from '@blueprintjs/core'
+import MidiRouter from './midi-router'
+
 export default function Home() {
-  return <h1 className="text-5xl font-bold text-purple-500">Hello world!</h1>
+  return (
+    <Card>
+      <H5>Router</H5>
+      <MidiRouter />
+    </Card>
+  )
 }
