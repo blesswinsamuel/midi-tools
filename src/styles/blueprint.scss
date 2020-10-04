@@ -11,22 +11,11 @@ body.bp3-dark {
   height: 50vh;
 }
 
-.docs-hotkey-piano-example {
-  opacity: 0.4;
-  transition: opacity ($pt-transition-duration * 2) $pt-transition-ease;
+$piano-grid-size: 5px;
 
-  &:hover {
-    cursor: pointer;
-    opacity: 0.6;
-  }
-
-  &:focus {
-    cursor: default;
-    opacity: 1;
-  }
-
+.midi-piano {
   > :first-child {
-    margin-bottom: $pt-grid-size * 2;
+    margin-bottom: $piano-grid-size * 2;
   }
 
   .piano-key {
@@ -36,12 +25,12 @@ body.bp3-dark {
 
     > div {
       background-color: $white;
-      border-bottom-left-radius: 5px;
-      border-bottom-right-radius: 5px;
+      // border-bottom-left-radius: 5px;
+      // border-bottom-right-radius: 5px;
       color: $black;
-      height: $pt-grid-size * 24;
-      margin-right: $pt-grid-size/2;
-      width: $pt-grid-size * 8;
+      height: $piano-grid-size * 24;
+      margin-right: $piano-grid-size/2;
+      width: $piano-grid-size * 3;
     }
   }
 
@@ -54,8 +43,8 @@ body.bp3-dark {
     > div {
       background-color: $black;
       color: $white;
-      height: $pt-grid-size * 16;
-      left: $pt-grid-size * -4;
+      height: $piano-grid-size * 16;
+      left: $piano-grid-size * -1.5;
       position: absolute;
       top: 0;
     }
@@ -72,6 +61,7 @@ body.bp3-dark {
     position: absolute;
     right: 0;
     text-align: center;
+    font-size: 6px;
   }
 
   .piano-key-note {

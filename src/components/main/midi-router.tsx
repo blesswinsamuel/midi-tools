@@ -1,15 +1,10 @@
-import React, { useEffect, useRef } from 'react'
-import Tone from 'tone'
-import WebMidi, { InputEventChannelBase } from 'webmidi'
+import React, { useEffect } from 'react'
+import { InputEventChannelBase } from 'webmidi'
 import MidiDeviceSelector from '../MidiDeviceSelector'
 import useLocalStorageState from '../hooks/useLocalStorageState'
+import { useWebMidiDevice } from '../WebMidi'
 
 export default function MidiRouter() {
-  const synth = useRef(null)
-  if (synth.current === null) {
-    synth.current = new Tone.PolySynth(10, Tone.Synth).toMaster()
-  }
-
   const [inDevice, setInDevice] = useLocalStorageState(
     'router:indevice',
     undefined
@@ -18,11 +13,10 @@ export default function MidiRouter() {
     'router:outdevice',
     undefined
   )
+  const deviceIn = useWebMidiDevice('input', inDevice)
+  const deviceOut = useWebMidiDevice('output', outDevice)
 
   useEffect(() => {
-    const deviceIn = WebMidi.getInputById(inDevice)
-    const deviceOut = WebMidi.getOutputById(outDevice)
-
     if (!deviceIn || !deviceOut) return
     const listener = (e: InputEventChannelBase<any>) => {
       deviceOut.send(e.data[0], Array.from(e.data.slice(1)))
@@ -32,7 +26,7 @@ export default function MidiRouter() {
       if (!deviceIn) return
       deviceIn.removeListener('midimessage', undefined, listener)
     }
-  }, [inDevice, outDevice])
+  }, [deviceIn, deviceOut])
 
   return (
     <div>
