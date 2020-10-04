@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import WebMidi, { Input, Output, WebMidiEvents } from 'webmidi'
+import WebMidi, { Input, MidiPort, Output, WebMidiEvents } from 'webmidi'
 import { Position, Toaster } from '@blueprintjs/core'
 import AppError from './AppError'
 import AppSpinner from './AppSpinner'
@@ -91,4 +91,30 @@ function useWebMidiDeviceConnectionListeners(webMidiEnabled: boolean) {
 
 export function useWebMidiDevices() {
   return useContext(WebMidiContext)
+}
+
+// type InputOrOutputType = 'input' | 'output'
+// type InputOrOutputObjectType<T> = T extends 'input'
+//   ? Input
+//   : T extends 'output'
+//   ? Output
+//   : never
+
+export function useWebMidiDevice(io: 'input', id: string): Input
+export function useWebMidiDevice(io: 'output', id: string): Output
+//   export function useWebMidiDevice<T extends InputOrOutputType>(
+//   io: T,
+//   id: string
+// ): Input | Output {
+export function useWebMidiDevice(
+  io: 'input' | 'output',
+  id: string
+): Input | Output {
+  const { inputs, outputs } = useWebMidiDevices()
+  switch (io) {
+    case 'input':
+      return inputs.find(d => d.id === id)
+    case 'output':
+      return outputs.find(d => d.id === id)
+  }
 }
