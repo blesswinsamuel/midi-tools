@@ -1,7 +1,8 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import WebMidi, { Input, Output, WebMidiEvents } from 'webmidi'
-import { Position, Spinner, Toaster } from '@blueprintjs/core'
+import { Position, Toaster } from '@blueprintjs/core'
 import AppError from './AppError'
+import AppSpinner from './AppSpinner'
 
 type WebMidiContextState = {
   inputs: Input[]
@@ -27,7 +28,7 @@ export function WebMidiProvider({ children }) {
     )
   }
   if (!webMidiEnabled) {
-    return <Spinner>Enabling WebMidi</Spinner>
+    return <AppSpinner>Enabling WebMidi</AppSpinner>
   }
 
   return (
