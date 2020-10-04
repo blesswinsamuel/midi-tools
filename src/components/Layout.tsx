@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Button, Classes, Navbar } from '@blueprintjs/core'
 import { classNames } from './classNames'
-import { useWakeLock } from './Wakelock'
+import { useWakeLock } from './WakeLock'
 
 function NavBar({
   menuItems,

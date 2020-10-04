@@ -5,7 +5,7 @@ import Layout from '../components/Layout'
 import NoSSR from '../components/NoSSR'
 import Head from 'next/head'
 import '../styles/blueprint.scss'
-import { WakeLockProvider } from '../components/Wakelock'
+import { WakeLockProvider } from '../components/WakeLock'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
