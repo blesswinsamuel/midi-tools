@@ -4,7 +4,8 @@ import { WebMidiProvider } from '../components/WebMidi'
 import Layout from '../components/Layout'
 import NoSSR from '../components/NoSSR'
 import Head from 'next/head'
-import '../styles/blueprint.css'
+import '../styles/blueprint.scss'
+import { WakeLockProvider } from '../components/Wakelock'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -15,9 +16,11 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <NoSSR>
         <WebMidiProvider>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <WakeLockProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </WakeLockProvider>
         </WebMidiProvider>
       </NoSSR>
     </>

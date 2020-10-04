@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { Alignment, Button, Classes, Navbar } from '@blueprintjs/core'
+import { Button, Classes, Navbar } from '@blueprintjs/core'
 import { classNames } from './classNames'
+import { useWakeLock } from './Wakelock'
 
 function NavBar({
   menuItems,
@@ -10,6 +11,7 @@ function NavBar({
   menuItems: { title: string; href: string }[]
 }) {
   const router = useRouter()
+  const { wakeLockEnabled, requestWakeLock, releaseWakeLock } = useWakeLock()
 
   const renderMenuItem = ({ href, title }) => {
     return (
@@ -29,21 +31,27 @@ function NavBar({
 
   return (
     <Navbar>
-      <Navbar.Group
-        align="center"
-        style={{ maxWidth: '1100px', margin: 'auto', padding: '0 1em' }}
-      >
-        <Link href="/">
-          <a
-            className={Classes.NAVBAR_HEADING}
-            style={{ textDecoration: 'none', color: 'white' }}
-          >
-            MIDI Tools
-          </a>
-        </Link>
-        <Navbar.Divider />
-        {menuItems.map(menuItem => renderMenuItem(menuItem))}
-      </Navbar.Group>
+      <div style={{ maxWidth: '1100px', margin: 'auto', padding: '0 1em' }}>
+        <Navbar.Group align="left">
+          <Link href="/">
+            <a
+              className={Classes.NAVBAR_HEADING}
+              style={{ textDecoration: 'none', color: 'white' }}
+            >
+              MIDI Tools
+            </a>
+          </Link>
+          <Navbar.Divider />
+          {menuItems.map(menuItem => renderMenuItem(menuItem))}
+        </Navbar.Group>
+        <Navbar.Group align="right">
+          <Button
+            icon={wakeLockEnabled ? 'eye-open' : 'eye-off'}
+            minimal
+            onClick={wakeLockEnabled ? releaseWakeLock : requestWakeLock}
+          />
+        </Navbar.Group>
+      </div>
     </Navbar>
   )
 }

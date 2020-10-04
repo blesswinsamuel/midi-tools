@@ -1,0 +1,80 @@
+@import '~normalize.css';
+@import '~@blueprintjs/core/lib/css/blueprint.css';
+@import '~@blueprintjs/icons/lib/css/blueprint-icons.css';
+@import '~@blueprintjs/core/lib/scss/variables';
+
+body.bp3-dark {
+  background: #394b59; /* #30404d;*/
+}
+
+.app-spinner {
+  height: 50vh;
+}
+
+.docs-hotkey-piano-example {
+  opacity: 0.4;
+  transition: opacity ($pt-transition-duration * 2) $pt-transition-ease;
+
+  &:hover {
+    cursor: pointer;
+    opacity: 0.6;
+  }
+
+  &:focus {
+    cursor: default;
+    opacity: 1;
+  }
+
+  > :first-child {
+    margin-bottom: $pt-grid-size * 2;
+  }
+
+  .piano-key {
+    display: inline-block;
+    position: relative;
+    z-index: 1;
+
+    > div {
+      background-color: $white;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      color: $black;
+      height: $pt-grid-size * 24;
+      margin-right: $pt-grid-size/2;
+      width: $pt-grid-size * 8;
+    }
+  }
+
+  .piano-key-sharp {
+    overflow: visible;
+    vertical-align: top;
+    width: 0;
+    z-index: 2;
+
+    > div {
+      background-color: $black;
+      color: $white;
+      height: $pt-grid-size * 16;
+      left: $pt-grid-size * -4;
+      position: absolute;
+      top: 0;
+    }
+  }
+
+  .piano-key-pressed > div {
+    background-color: $pt-intent-primary;
+    color: $white;
+  }
+
+  .piano-key-text {
+    bottom: 5px;
+    left: 0;
+    position: absolute;
+    right: 0;
+    text-align: center;
+  }
+
+  .piano-key-note {
+    opacity: 0.5;
+  }
+}
