@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
+import { Link, NavLink } from 'react-router-dom'
 import { Button, Classes, Navbar } from '@blueprintjs/core'
 import { classNames } from './classNames'
 import { useWakeLock } from './WakeLock'
@@ -10,22 +9,18 @@ function NavBar({
 }: {
   menuItems: { title: string; href: string }[]
 }) {
-  const router = useRouter()
   const { wakeLockEnabled, requestWakeLock, releaseWakeLock } = useWakeLock()
 
-  const renderMenuItem = ({ href, title }) => {
+  const renderMenuItem = ({ href, title }: { title: string; href: string }) => {
     return (
-      <Link key={href} href={href}>
-        <a
-          className={classNames(
-            Classes.MINIMAL,
-            Classes.BUTTON,
-            router.pathname == href && Classes.ACTIVE
-          )}
-        >
-          {title}
-        </a>
-      </Link>
+      <NavLink
+        key={href}
+        to={href}
+        className={classNames(Classes.MINIMAL, Classes.BUTTON)}
+        activeClassName={Classes.ACTIVE}
+      >
+        {title}
+      </NavLink>
     )
   }
 
@@ -33,16 +28,15 @@ function NavBar({
     <Navbar>
       <div style={{ maxWidth: '1100px', margin: 'auto', padding: '0 1em' }}>
         <Navbar.Group align="left">
-          <Link href="/">
-            <a
-              className={Classes.NAVBAR_HEADING}
-              style={{ textDecoration: 'none', color: 'white' }}
-            >
-              MIDI Tools
-            </a>
+          <Link
+            to="/"
+            className={Classes.NAVBAR_HEADING}
+            style={{ textDecoration: 'none', color: 'white' }}
+          >
+            MIDI Tools
           </Link>
           <Navbar.Divider />
-          {menuItems.map(menuItem => renderMenuItem(menuItem))}
+          {menuItems.map((menuItem) => renderMenuItem(menuItem))}
         </Navbar.Group>
         <Navbar.Group align="right">
           <Button
@@ -56,7 +50,7 @@ function NavBar({
   )
 }
 
-export default function Layout({ children }) {
+const Layout: React.FC<{}> = ({ children }) => {
   useEffect(() => {
     document.body.classList.add(Classes.DARK)
     return () => {
@@ -79,3 +73,5 @@ export default function Layout({ children }) {
     </>
   )
 }
+
+export default Layout

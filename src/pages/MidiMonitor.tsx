@@ -1,10 +1,10 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
-import WebMidi from 'webmidi'
+import WebMidi, { InputEvents } from 'webmidi'
 import MidiDeviceSelector from '../components/MidiDeviceSelector'
 import { Button, Checkbox, ControlGroup, NumericInput } from '@blueprintjs/core'
 
-const eventTypes = {
+const eventTypes: { [key: string]: (e: any) => string } = {
   activesensing: (e: any) => '',
   clock: (e: any) => '',
   controlchange: (e: { controller: { number: any; name: any }; value: any }) =>
@@ -50,7 +50,7 @@ export default function MidiMonitor() {
 
   const device = WebMidi.getInputById(deviceId)
 
-  const initTime = useRef(null)
+  const initTime = useRef<any>(null)
   const clear = () => {
     setLogs('')
     initTime.current = null
@@ -58,11 +58,11 @@ export default function MidiMonitor() {
 
   useEffect(() => {
     const listener = (e: {
-      type: string
+      type: keyof InputEvents
       timestamp: number
       channel: { toString: () => string }
     }) => {
-      const getMessage = eventTypes[e.type]
+      const getMessage = eventTypes[e.type as any] as any
       if (!getMessage) {
         console.warn(`No getMessage function for ${e.type}`)
       }
@@ -70,7 +70,7 @@ export default function MidiMonitor() {
         initTime.current = e.timestamp
       }
       const clockTime = (e.timestamp - initTime.current) / ((60 * 1000) / tempo)
-      setLogs(l =>
+      setLogs((l) =>
         [
           l,
           [
@@ -80,7 +80,7 @@ export default function MidiMonitor() {
             getMessage ? getMessage(e) : '',
           ].join(' '),
         ]
-          .filter(x => x)
+          .filter((x) => x)
           .join('\n')
       )
     }
@@ -94,9 +94,9 @@ export default function MidiMonitor() {
         })
       }
     }
-  }, [selectedEventTypes, selectedChannels, device])
+  }, [selectedEventTypes, selectedChannels, device, tempo])
 
-  const logRef = useRef<HTMLPreElement | null>()
+  const logRef = useRef<HTMLPreElement>(null)
   useLayoutEffect(() => {
     if (logRef.current) {
       logRef.current.scrollTop = logRef.current.scrollHeight
@@ -123,12 +123,12 @@ export default function MidiMonitor() {
         <Button onClick={clear}>Clear</Button>
       </ControlGroup>
       <div>
-        {Object.keys(eventTypes).map(eventType => (
+        {Object.keys(eventTypes).map((eventType) => (
           <Checkbox
             key={eventType}
             inline={true}
             checked={selectedEventTypes.includes(eventType)}
-            onChange={e => {
+            onChange={(e) => {
               if ((e.target as HTMLInputElement).checked) {
                 setEventTypes((t: any) => [...t, eventType])
               } else {
@@ -144,12 +144,12 @@ export default function MidiMonitor() {
       </div>
       <div>
         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].map(
-          channel => (
+          (channel) => (
             <Checkbox
               key={channel}
               inline={true}
               checked={selectedChannels.includes(channel)}
-              onChange={e => {
+              onChange={(e) => {
                 if ((e.target as HTMLInputElement).checked) {
                   setChannels((ch: any) => [...ch, channel])
                 } else {

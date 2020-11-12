@@ -1,26 +1,33 @@
 import React, { useEffect, useRef } from 'react'
-import Tone from 'tone'
-import WebMidi from 'webmidi'
+import WebMidi, { InputEvents } from 'webmidi'
 import MidiDeviceSelector from '../components/MidiDeviceSelector'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
+import { PolySynth } from 'tone'
 
-function DeviceSelector({ setDeviceIds, deviceIds }) {
+type Devices = { input?: string; inputController?: string }
+
+type DeviceSelectorProps = {
+  setDeviceIds: (v: any) => void
+  deviceIds: Devices
+}
+
+function DeviceSelector({ setDeviceIds, deviceIds }: DeviceSelectorProps) {
   return (
     <>
       <MidiDeviceSelector
         mode="input"
         label="Input"
         value={deviceIds.input}
-        onChange={v => {
-          setDeviceIds(d => ({ ...d, input: v }))
+        onChange={(v) => {
+          setDeviceIds((d: Devices) => ({ ...d, input: v }))
         }}
       />
       <MidiDeviceSelector
         mode="input"
         label="Input Controller"
         value={deviceIds.inputController}
-        onChange={v => {
-          setDeviceIds(d => ({ ...d, inputController: v }))
+        onChange={(v) => {
+          setDeviceIds((d: Devices) => ({ ...d, inputController: v }))
         }}
       />
     </>
@@ -28,29 +35,33 @@ function DeviceSelector({ setDeviceIds, deviceIds }) {
 }
 
 //create a synth and connect it to the master output (your speakers)
-export default function Synth() {
-  const synth = useRef(null)
+export default function MidiSynth() {
+  const synth = useRef<PolySynth | null>(null)
   if (synth.current === null) {
-    synth.current = new Tone.PolySynth(10, Tone.Synth).toMaster()
+    synth.current = new PolySynth().toDestination()
   }
 
-  const [deviceIds, setDeviceIds] = useLocalStorageState(
+  const [deviceIds, setDeviceIds] = useLocalStorageState<Devices>(
     'instrument:devices',
     {}
   )
   const devices = {
-    input: WebMidi.getInputById(deviceIds.input),
-    inputController: WebMidi.getInputById(deviceIds.inputController),
+    input: deviceIds?.input ? WebMidi.getInputById(deviceIds.input) : undefined,
+    inputController: deviceIds?.inputController
+      ? WebMidi.getInputById(deviceIds.inputController)
+      : undefined,
   }
 
   useEffect(() => {
     if (!devices.input) return
-    const listener = e => {
+    const listener: <T extends 'noteoff' | 'noteon'>(
+      event: InputEvents[T]
+    ) => void = (e) => {
       const note = e.note.name + e.note.octave
       if (e.rawVelocity > 0) {
-        synth.current.triggerAttack(note, undefined, e.velocity)
+        synth.current?.triggerAttack(note, undefined, e.velocity)
       } else {
-        synth.current.triggerRelease(note)
+        synth.current?.triggerRelease(note)
       }
     }
     devices.input.addListener('noteon', 'all', listener)

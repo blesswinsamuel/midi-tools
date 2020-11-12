@@ -1,6 +1,8 @@
 import { Spinner } from '@blueprintjs/core'
 import React from 'react'
 
-export default function AppSpinner({ children }) {
+const AppSpinner: React.FC<{}> = ({ children }) => {
   return <Spinner className="app-spinner">{children}</Spinner>
 }
+
+export default AppSpinner

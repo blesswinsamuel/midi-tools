@@ -1,7 +1,7 @@
 // https://github.com/cwilso/metronome/blob/master/js/metronomeworker.js
-// @ts-ignore
 let timerID = null
 
+// eslint-disable-next-line no-restricted-globals
 self.onmessage = (e) => {
   if (e.data.action === 'start') {
     console.log('starting')

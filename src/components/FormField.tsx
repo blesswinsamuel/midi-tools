@@ -1,6 +1,11 @@
 import React from 'react'
 
-export default function FormField({ label, labelFor, children }) {
+type FormFieldProps = {
+  label: string
+  labelFor: string
+}
+
+const FormField: React.FC<FormFieldProps> = ({ label, labelFor, children }) => {
   return (
     <div>
       <label htmlFor={labelFor}>{label}</label>
@@ -8,3 +13,5 @@ export default function FormField({ label, labelFor, children }) {
     </div>
   )
 }
+
+export default FormField

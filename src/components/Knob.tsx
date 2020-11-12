@@ -1,14 +1,14 @@
 import { Intent, Spinner } from '@blueprintjs/core'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
-export default function Knob({ max, min, onChange, value, stepSize }) {
+export default function Knob({ max, min, onChange, value, stepSize }: any) {
   const [isPinching, setPinching] = useState(false)
   const prevValue = useRef(value)
   const divRef = useRef<any>()
   const xyRef = useRef({ x: 0, y: 0 })
 
   const getXY = useCallback(
-    e => {
+    (e) => {
       const {
         left,
         top,
@@ -22,7 +22,7 @@ export default function Knob({ max, min, onChange, value, stepSize }) {
     [divRef]
   )
 
-  const handleMouseDown = e => {
+  const handleMouseDown: React.MouseEventHandler = (e) => {
     e.preventDefault()
 
     xyRef.current = getXY(e)
@@ -35,7 +35,7 @@ export default function Knob({ max, min, onChange, value, stepSize }) {
       setPinching(false)
     }
 
-    const handleMouseMove = e => {
+    const handleMouseMove: any = (e: any) => {
       if (isPinching) {
         const { x, y } = getXY(e)
 

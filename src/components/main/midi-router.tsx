@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react'
-import { InputEventChannelBase } from 'webmidi'
+import { InputEventBase } from 'webmidi'
 import MidiDeviceSelector from '../MidiDeviceSelector'
 import useLocalStorageState from '../hooks/useLocalStorageState'
 import { useWebMidiDevice } from '../WebMidi'
 
 export default function MidiRouter() {
-  const [inDevice, setInDevice] = useLocalStorageState(
+  const [inDevice, setInDevice] = useLocalStorageState<string | undefined>(
     'router:indevice',
     undefined
   )
-  const [outDevice, setOutDevice] = useLocalStorageState(
+  const [outDevice, setOutDevice] = useLocalStorageState<string | undefined>(
     'router:outdevice',
     undefined
   )
@@ -18,7 +18,7 @@ export default function MidiRouter() {
 
   useEffect(() => {
     if (!deviceIn || !deviceOut) return
-    const listener = (e: InputEventChannelBase<any>) => {
+    const listener = (e: InputEventBase<'midimessage'>) => {
       deviceOut.send(e.data[0], Array.from(e.data.slice(1)))
     }
     deviceIn.addListener('midimessage', undefined, listener)

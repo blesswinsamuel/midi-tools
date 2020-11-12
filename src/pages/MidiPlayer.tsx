@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useCallback, useEffect, useRef } from 'react'
 import timer from '../components/timer'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
@@ -25,32 +26,32 @@ function DeviceSelector({ setDeviceIds, deviceIds }) {
         mode="input"
         label="Input"
         value={deviceIds.input}
-        onChange={v => {
-          setDeviceIds(d => ({ ...d, input: v }))
+        onChange={(v) => {
+          setDeviceIds((d) => ({ ...d, input: v }))
         }}
       />
       <MidiDeviceSelector
         mode="input"
         label="Input Controller"
         value={deviceIds.inputController}
-        onChange={v => {
-          setDeviceIds(d => ({ ...d, inputController: v }))
+        onChange={(v) => {
+          setDeviceIds((d) => ({ ...d, inputController: v }))
         }}
       />
       <MidiDeviceSelector
         mode="output"
         label="Output Controller"
         value={deviceIds.outputController}
-        onChange={v => {
-          setDeviceIds(d => ({ ...d, outputController: v }))
+        onChange={(v) => {
+          setDeviceIds((d) => ({ ...d, outputController: v }))
         }}
       />
       <MidiDeviceSelector
         mode="output"
         label="Output"
         value={deviceIds.output}
-        onChange={v => {
-          setDeviceIds(d => ({ ...d, output: v }))
+        onChange={(v) => {
+          setDeviceIds((d) => ({ ...d, output: v }))
         }}
       />
     </ControlGroup>
@@ -143,7 +144,7 @@ function Transport({ timer, outputController, inputController }) {
 
   useEffect(() => {
     if (!inputController) return
-    inputController.addListener('controlchange', 'all', e => {
+    inputController.addListener('controlchange', 'all', (e) => {
       // console.log('CTRLR:', e.controller, e.value)
       if (e.controller.number === 41 && e.value === 127)
         // Play
@@ -241,7 +242,7 @@ function MixerSlider({ inputController, controllerNumber }) {
   const [value, setValue] = useAnimationState(0)
   useEffect(() => {
     if (!inputController) return
-    const listener = e => {
+    const listener = (e) => {
       if (e.controller.number === controllerNumber) {
         setValue(e.value)
       }
@@ -257,7 +258,7 @@ function MixerSlider({ inputController, controllerNumber }) {
       max={127}
       stepSize={1}
       labelStepSize={16}
-      onChange={v => setValue(v)}
+      onChange={(v) => setValue(v)}
       value={value}
       vertical
     />
@@ -268,7 +269,7 @@ function MixerKnob({ inputController, controllerNumber }) {
   const [value, setValue] = useAnimationState(0)
   useEffect(() => {
     if (!inputController) return
-    const listener = e => {
+    const listener = (e) => {
       if (e.controller.number === controllerNumber) {
         setValue(e.value)
       }
@@ -288,7 +289,7 @@ function Mixer({ inputController }) {
     <Card>
       <ControlGroup>
         {Array.of(0, 1, 2, 3, 4, 5, 6, 7)
-          .map(n => (
+          .map((n) => (
             <div key={n}>
               <MixerKnob
                 inputController={inputController}
@@ -319,7 +320,7 @@ function Mixer({ inputController }) {
   )
 }
 
-export default function Instrument() {
+export default function MidiPlayer() {
   const [deviceIds, setDeviceIds] = useLocalStorageState(
     'midi:instrument:devices',
     {}
@@ -354,7 +355,7 @@ export default function Instrument() {
 
   useEffect(() => {
     if (!inputController) return
-    const listener = e => {
+    const listener = (e) => {
       if (e.controller.number === 45 && e.value === 127) tapTempo()
     }
     inputController.addListener('controlchange', 'all', listener)
@@ -376,7 +377,7 @@ export default function Instrument() {
           value={tempo}
           min={32}
           max={240}
-          onValueChange={v => setTempo(v)}
+          onValueChange={(v) => setTempo(v)}
         />
         <Button onClick={tapTempo}>Tap</Button>
         <NumericInput
@@ -386,18 +387,18 @@ export default function Instrument() {
           value={ppq}
           min={1}
           max={1920}
-          onValueChange={v => setPpq(v)}
+          onValueChange={(v) => setPpq(v)}
         />
         <InputGroup
           value={timeSignature.join('/')}
           min={1}
           max={12}
-          onChange={e =>
+          onChange={(e) =>
             setTimeSignature(
               e.target.value
                 .split('/')
                 .slice(0, 2)
-                .map(i =>
+                .map((i) =>
                   i === '' || isNaN((i as unknown) as number) ? 0 : parseInt(i)
                 )
             )

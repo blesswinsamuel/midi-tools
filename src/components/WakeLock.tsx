@@ -1,4 +1,4 @@
-import {
+import React, {
   createContext,
   useCallback,
   useContext,
@@ -6,6 +6,25 @@ import {
   useRef,
   useState,
 } from 'react'
+
+type WakeLockType = 'screen'
+
+interface WakeLockSentinel extends EventTarget {
+  readonly released: boolean
+  readonly type: WakeLockType
+  release(): Promise<undefined>
+  onrelease: EventListener
+}
+
+interface WakeLock {
+  request(type: WakeLockType): Promise<WakeLockSentinel>
+}
+
+declare global {
+  interface Navigator {
+    readonly wakeLock: WakeLock
+  }
+}
 
 type WakeLockContextState = {
   wakeLockEnabled: Boolean
@@ -19,12 +38,12 @@ const WakeLockContext = createContext<WakeLockContextState>({
   releaseWakeLock: () => {},
 })
 
-export function WakeLockProvider({ children }) {
-  const [
+export const WakeLockProvider: React.FC<{}> = ({ children }) => {
+  const {
     wakeLockEnabled,
     requestWakeLock,
     releaseWakeLock,
-  ] = useRequestWakeLock()
+  } = useRequestWakeLock()
 
   return (
     <WakeLockContext.Provider
@@ -38,8 +57,8 @@ export function WakeLockProvider({ children }) {
 function useRequestWakeLock() {
   // The wake lock sentinel.
   const [wakeLockEnabled, setWakeLockEnabled] = useState(false)
-  const [wakeLock, setWakeLock] = useState(null)
-  const wakeLockRef = useRef(null)
+  const [wakeLock, setWakeLock] = useState<WakeLockSentinel | null>(null)
+  const wakeLockRef = useRef<WakeLockSentinel | null>(null)
   const wakeLockUserRequestedRef = useRef(true)
 
   const requestWakeLock = useCallback(async () => {
@@ -100,7 +119,7 @@ function useRequestWakeLock() {
     }
   }, [wakeLock])
 
-  return [wakeLockEnabled, requestWakeLock, releaseWakeLock, wakeLock]
+  return { wakeLockEnabled, requestWakeLock, releaseWakeLock, wakeLock }
 }
 
 export function useWakeLock() {

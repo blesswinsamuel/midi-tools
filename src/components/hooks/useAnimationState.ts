@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-export default function useAnimationState(initialState) {
+export default function useAnimationState<T>(initialState: T) {
   const prevStateRef = useRef(initialState)
-  const animationFrameRef = useRef(null)
+  const animationFrameRef = useRef<number | null>(null)
   const [state, setState] = useState(initialState)
 
   const refSetState = useCallback(
-    newState => {
+    (newState) => {
       const onFrame = () => {
         if (newState !== prevStateRef.current) {
           setState(newState)
@@ -14,17 +14,21 @@ export default function useAnimationState(initialState) {
         }
       }
       const loop = () => {
-        cancelAnimationFrame(animationFrameRef.current)
+        if (animationFrameRef.current !== null) {
+          cancelAnimationFrame(animationFrameRef.current)
+        }
         animationFrameRef.current = requestAnimationFrame(onFrame)
       }
       loop()
     },
-    [animationFrameRef, prevStateRef, setState],
+    [animationFrameRef, prevStateRef, setState]
   )
 
   useEffect(() => {
     return () => {
-      cancelAnimationFrame(animationFrameRef.current)
+      if (animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
     }
   }, [animationFrameRef])
 

@@ -1,3 +1,4 @@
+import React from 'react'
 import { Card, H5 } from '@blueprintjs/core'
 import MidiRouter from '../components/main/midi-router'
 import MidiDevices from '../components/main/midi-devices'

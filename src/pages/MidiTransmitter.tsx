@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
-import WebMidi from 'webmidi'
+import WebMidi, { Output } from 'webmidi'
 import MidiDeviceSelector from '../components/MidiDeviceSelector'
 import Select from '../components/Select'
 import { Button, InputGroup, NumericInput } from '@blueprintjs/core'
@@ -35,7 +35,7 @@ const options = [
   'stopNote',
 ]
 
-export const handleFormSubmit = func => event => {
+export const handleFormSubmit = (func: any) => (event: any) => {
   event.preventDefault()
   return func()
 }
@@ -49,6 +49,7 @@ export default function MidiTransmitter() {
     'midi:transmitter:method',
     ''
   )
+  const [state, setState] = useState({})
 
   const device = WebMidi.getOutputById(deviceId)
 
@@ -61,20 +62,25 @@ export default function MidiTransmitter() {
           mode="output"
           label="Output"
           value={deviceId}
-          onChange={v => setDeviceId(v)}
+          onChange={(v) => setDeviceId(v)}
         />
       </div>
       <Select
         options={['', ...options]}
         value={method}
-        onChange={event => setMethod(event.currentTarget.value)}
+        onChange={(event) => setMethod(event.currentTarget.value)}
       />
-      {renderMethod(method, device)}
+      {renderMethod(method, device, state, setState)}
     </div>
   )
 }
 
-const methods = {
+const methods: {
+  [key: string]: {
+    fields: (keyof typeof fieldTypes)[]
+    doIt: (device: Output, state: any) => void
+  }
+} = {
   playNote: {
     fields: [
       'note',
@@ -179,18 +185,26 @@ const fieldTypes = {
   'options.release': 'number',
   'options.time': 'string',
   'options.velocity': 'number',
+  program: 'string', // check if this is right
 }
 
-const renderMethod = (method, device) => {
-  const [state, setState] = useState({})
+const renderMethod = (
+  method: string,
+  device: Output | false,
+  state: any,
+  setState: any
+) => {
   const m = methods[method]
   if (!m) {
     return <div>Not implemented</div>
   }
 
-  const getState = field =>
+  const getState = (field: keyof typeof fieldTypes) =>
     field.split('.').reduce((prev, curr) => prev && prev[curr], state) || ''
-  const setFieldState = (field, newFieldValue) => {
+  const setFieldState = (
+    field: keyof typeof fieldTypes,
+    newFieldValue: any
+  ) => {
     const fieldParts = field.split('.')
     const newState = { ...state }
     let last = newState
@@ -208,7 +222,7 @@ const renderMethod = (method, device) => {
     setState(newState)
   }
 
-  const getField = field => {
+  const getField = (field: keyof typeof fieldTypes) => {
     const fieldType = fieldTypes[field]
     if (!fieldType) {
       return <div>Field type unknown for field {field}</div>
@@ -219,7 +233,9 @@ const renderMethod = (method, device) => {
           <InputGroup
             id={field}
             value={getState(field)}
-            onChange={e => setFieldState(field, e.target.value.split(','))}
+            onChange={(e: any) =>
+              setFieldState(field, e.target.value.split(','))
+            }
           />
         )
       case 'numberOrArray':
@@ -227,10 +243,10 @@ const renderMethod = (method, device) => {
           <InputGroup
             id={field}
             value={getState(field)}
-            onChange={e =>
+            onChange={(e: any) =>
               setFieldState(
                 field,
-                e.target.value.split(',').map(v => (!isNaN(v) ? +v : v))
+                e.target.value.split(',').map((v: any) => (!isNaN(v) ? +v : v))
               )
             }
           />
@@ -240,7 +256,7 @@ const renderMethod = (method, device) => {
           <InputGroup
             id={field}
             value={getState(field)}
-            onChange={e =>
+            onChange={(e: any) =>
               setFieldState(
                 field,
                 !isNaN(e.target.value) ? +e.target.value : e.target.value
@@ -253,7 +269,7 @@ const renderMethod = (method, device) => {
           <NumericInput
             id={field}
             value={getState(field)}
-            onChange={e => setFieldState(field, e.target.value)}
+            onChange={(e) => setFieldState(field, e.target.value)}
             // min={0}
             // max={127}
           />
@@ -265,7 +281,7 @@ const renderMethod = (method, device) => {
           <InputGroup
             id={field}
             value={getState(field)}
-            onChange={e => setFieldState(field, e.target.value)}
+            onChange={(e: any) => setFieldState(field, e.target.value)}
           />
         )
       default:
@@ -282,7 +298,9 @@ const renderMethod = (method, device) => {
       onSubmit={handleFormSubmit(() => {
         try {
           console.log(state)
-          m.doIt(device, state)
+          if (device) {
+            m.doIt(device, state)
+          }
         } catch (e) {
           console.error(e)
           // Toaster.show({
@@ -295,7 +313,7 @@ const renderMethod = (method, device) => {
     >
       <table>
         <tbody>
-          {m.fields.map(field => {
+          {m.fields.map((field) => {
             return (
               <tr key={field}>
                 <td>
@@ -311,3 +329,9 @@ const renderMethod = (method, device) => {
     </form>
   )
 }
+
+// const MidiTransmitter = () => {
+//   return null
+// }
+
+// export default MidiTransmitter

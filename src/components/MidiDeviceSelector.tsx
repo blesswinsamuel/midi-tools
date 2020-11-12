@@ -4,9 +4,9 @@ import Select from './Select'
 
 type MidiDeviceSelectorProps = {
   label: string
-  mode?: 'input' | 'output'
-  value: any
-  onChange: any
+  mode: 'input' | 'output'
+  value?: string
+  onChange: (v: string) => void
 }
 
 export default function MidiDeviceSelector({
@@ -16,14 +16,17 @@ export default function MidiDeviceSelector({
   onChange,
 }: MidiDeviceSelectorProps) {
   const devices = useWebMidiDevices()
-  const options = devices[mode + 's']
+  const options =
+    devices[
+      { input: 'inputs', output: 'outputs' }[mode] as 'inputs' | 'outputs'
+    ]
   return (
     <Select
       value={value}
-      onChange={event => onChange(event.currentTarget.value)}
+      onChange={(event) => onChange(event.currentTarget.value)}
       options={[{ id: '', name: `Select ${label}...` }, ...options]}
-      valueKey={opt => opt.id}
-      labelKey={opt => opt.name}
+      valueKey={(opt) => opt.id}
+      labelKey={(opt) => opt.name}
     />
   )
 }

@@ -1,8 +1,9 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import WebMidi, { Input, MidiPort, Output, WebMidiEvents } from 'webmidi'
+import WebMidi, { Input, Output, WebMidiEvents } from 'webmidi'
 import { Position, Toaster } from '@blueprintjs/core'
 import AppError from './AppError'
 import AppSpinner from './AppSpinner'
+import React from 'react'
 
 type WebMidiContextState = {
   inputs: Input[]
@@ -14,7 +15,7 @@ const WebMidiContext = createContext<WebMidiContextState>({
   outputs: [],
 })
 
-export function WebMidiProvider({ children }) {
+export const WebMidiProvider: React.FC<{}> = ({ children }) => {
   const [webMidiEnabled, webMidiError] = useRequestWebMidi()
   const { inputs, outputs } = useWebMidiDeviceConnectionListeners(
     webMidiEnabled
@@ -38,16 +39,16 @@ export function WebMidiProvider({ children }) {
   )
 }
 
-function useRequestWebMidi() {
+function useRequestWebMidi(): [boolean, Error | null] {
   const [webMidiEnabled, setWebMidiEnabled] = useState(false)
-  const [webMidiError, setWebMidiError] = useState(null)
+  const [webMidiError, setWebMidiError] = useState<Error | null>(null)
 
   useEffect(() => {
     if (WebMidi.enabled) {
       setWebMidiEnabled(true)
       return
     }
-    WebMidi.enable(function(err) {
+    WebMidi.enable(function (err) {
       if (err) {
         setWebMidiError(err)
       } else {
@@ -59,15 +60,13 @@ function useRequestWebMidi() {
   return [webMidiEnabled, webMidiError]
 }
 
-export const AppToaster =
-  typeof window !== 'undefined' &&
-  Toaster.create({
-    position: Position.TOP_RIGHT,
-  })
+export const AppToaster = Toaster.create({
+  position: Position.TOP_RIGHT,
+})
 
 function useWebMidiDeviceConnectionListeners(webMidiEnabled: boolean) {
-  const [inputs, setInputs] = useState([])
-  const [outputs, setOutputs] = useState([])
+  const [inputs, setInputs] = useState<Input[]>([])
+  const [outputs, setOutputs] = useState<Output[]>([])
 
   useEffect(() => {
     if (!webMidiEnabled) return
@@ -100,21 +99,21 @@ export function useWebMidiDevices() {
 //   ? Output
 //   : never
 
-export function useWebMidiDevice(io: 'input', id: string): Input
-export function useWebMidiDevice(io: 'output', id: string): Output
+export function useWebMidiDevice(io: 'input', id?: string): Input
+export function useWebMidiDevice(io: 'output', id?: string): Output
 //   export function useWebMidiDevice<T extends InputOrOutputType>(
 //   io: T,
 //   id: string
 // ): Input | Output {
 export function useWebMidiDevice(
   io: 'input' | 'output',
-  id: string
-): Input | Output {
+  id?: string
+): Input | Output | undefined {
   const { inputs, outputs } = useWebMidiDevices()
   switch (io) {
     case 'input':
-      return inputs.find(d => d.id === id)
+      return inputs.find((d) => d.id === id)
     case 'output':
-      return outputs.find(d => d.id === id)
+      return outputs.find((d) => d.id === id)
   }
 }

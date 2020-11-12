@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 import MidiDeviceSelector from '../MidiDeviceSelector'
 import useLocalStorageState from '../hooks/useLocalStorageState'
 import { useWebMidiDevice } from '../WebMidi'
 import MidiPiano from '../MidiPiano'
 
 export default function MidiInstrument() {
-  const [inDevice, setInDevice] = useLocalStorageState(
+  const [inDevice, setInDevice] = useLocalStorageState<string | undefined>(
     'instrument:input',
     undefined
   )

@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import Tone from 'tone'
+import { PolySynth, ToneAudioNode } from 'tone'
 import { MidiPort } from 'webmidi'
 import { HTMLTable, Tab, Tabs } from '@blueprintjs/core'
 import { useWebMidiDevices } from '../WebMidi'
@@ -18,7 +18,7 @@ function DeviceTable({ devices }: { devices: MidiPort[] }) {
         </tr>
       </thead>
       <tbody>
-        {devices.map(input => (
+        {devices.map((input) => (
           <tr key={input.id}>
             {/* <td>{input.connection}</td> */}
             <td>{input.id}</td>
@@ -34,9 +34,9 @@ function DeviceTable({ devices }: { devices: MidiPort[] }) {
 }
 
 export default function MidiDevices() {
-  const synth = useRef(null)
+  const synth = useRef<ToneAudioNode | null>(null)
   if (synth.current === null) {
-    synth.current = new Tone.PolySynth(10, Tone.Synth).toMaster()
+    synth.current = new PolySynth().toDestination()
   }
 
   const { inputs, outputs } = useWebMidiDevices()

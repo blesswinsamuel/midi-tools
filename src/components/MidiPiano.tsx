@@ -1,5 +1,5 @@
 import { Classes } from '@blueprintjs/core'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Input, InputEventNoteoff, InputEventNoteon } from 'webmidi'
 import { classNames } from './classNames'
 
@@ -12,7 +12,7 @@ interface IPianoKeyProps {
 function PianoKey({ hotkey, note, pressed }: IPianoKeyProps) {
   const classes = classNames('piano-key', {
     'piano-key-pressed': pressed,
-    'piano-key-sharp': /\#/.test(note),
+    'piano-key-sharp': /#/.test(note),
   })
   const elevation = classNames(
     pressed ? Classes.ELEVATION_0 : Classes.ELEVATION_2
@@ -51,9 +51,9 @@ export default function MidiPiano({ input }: { input: Input }) {
   useEffect(() => {
     if (!input) return
     const noteOn = (e: InputEventNoteon) =>
-      setKeys(keys => Object.assign({}, keys, { [e.note.number]: true }))
+      setKeys((keys) => Object.assign({}, keys, { [e.note.number]: true }))
     const noteOff = (e: InputEventNoteoff) =>
-      setKeys(keys => Object.assign({}, keys, { [e.note.number]: false }))
+      setKeys((keys) => Object.assign({}, keys, { [e.note.number]: false }))
     input.addListener('noteon', 'all', noteOn)
     input.addListener('noteoff', 'all', noteOff)
     return () => {
@@ -65,7 +65,7 @@ export default function MidiPiano({ input }: { input: Input }) {
   return (
     <div className="midi-piano">
       <div>
-        {octaves.map(octave =>
+        {octaves.map((octave) =>
           noteNames.map((noteName, noteIdx) => (
             <PianoKey
               key={`${noteName}${octave}`}

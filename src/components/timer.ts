@@ -1,3 +1,4 @@
+// @ts-nocheck
 import WebMidi from 'webmidi'
 
 // https://github.com/cwilso/metronome/blob/master/js/metronome.js
@@ -46,7 +47,7 @@ function timer() {
     // notesInQueue.push({ note: beat, time: time })
 
     // do stuff
-    listeners.forEach(listener => listener(time, state))
+    listeners.forEach((listener) => listener(time, state))
   }
 
   function start() {
@@ -75,16 +76,16 @@ function timer() {
     }
   }
 
-  const subscribe = function(listener) {
+  const subscribe = function (listener) {
     listeners.push(listener)
     return () => {
-      listeners = listeners.filter(l => l !== listener)
+      listeners = listeners.filter((l) => l !== listener)
     }
   }
 
   const timerWorker = new Worker('/worker.js')
 
-  timerWorker.onmessage = function(e) {
+  timerWorker.onmessage = function (e) {
     if (e.data === 'tick') {
       // console.log('tick!')
       scheduler()
