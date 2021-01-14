@@ -65,7 +65,7 @@ export default function Knob({ max, min, onChange, value, stepSize }: any) {
       document.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseup', handleMouseUp)
     }
-  }, [getXY, onChange, isPinching, prevValue])
+  }, [getXY, onChange, isPinching, prevValue, min, max])
 
   return (
     <div
