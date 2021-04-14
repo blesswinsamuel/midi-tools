@@ -1,5 +1,6 @@
 // @ts-nocheck
 import WebMidi from 'webmidi'
+import TimerWorker from './worker?worker'
 
 // https://github.com/cwilso/metronome/blob/master/js/metronome.js
 function timer() {
@@ -83,7 +84,7 @@ function timer() {
     }
   }
 
-  const timerWorker = new Worker('/worker.js')
+  const timerWorker = new TimerWorker()
 
   timerWorker.onmessage = function (e) {
     if (e.data === 'tick') {

@@ -1,8 +1,8 @@
 import React from 'react'
-import MidiDeviceSelector from '../MidiDeviceSelector'
-import useLocalStorageState from '../hooks/useLocalStorageState'
-import { useWebMidiDevice } from '../WebMidi'
-import MidiPiano from '../MidiPiano'
+import MidiDeviceSelector from '../../components/MidiDeviceSelector'
+import useLocalStorageState from '../../components/hooks/useLocalStorageState'
+import { useWebMidiDevice } from '../../components/WebMidi'
+import MidiPiano from '../../components/MidiPiano'
 
 export default function MidiInstrument() {
   const [inDevice, setInDevice] = useLocalStorageState<string | undefined>(
@@ -12,7 +12,7 @@ export default function MidiInstrument() {
   const deviceIn = useWebMidiDevice('input', inDevice)
 
   return (
-    <div>
+    <div className="space-y-3">
       <MidiDeviceSelector
         mode="input"
         label="Input"

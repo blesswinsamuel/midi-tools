@@ -1,4 +1,3 @@
-import { Classes } from '@blueprintjs/core'
 import React, { useEffect, useState } from 'react'
 import { Input, InputEventNoteoff, InputEventNoteon } from 'webmidi'
 import { classNames } from './classNames'
@@ -10,20 +9,45 @@ interface IPianoKeyProps {
 }
 
 function PianoKey({ hotkey, note, pressed }: IPianoKeyProps) {
-  const classes = classNames('piano-key', {
-    'piano-key-pressed': pressed,
-    'piano-key-sharp': /#/.test(note),
-  })
-  const elevation = classNames(
-    pressed ? Classes.ELEVATION_0 : Classes.ELEVATION_2
-  )
+  const isBlack = /#/.test(note)
+  const isWhite = !isBlack
+  const isPressed = pressed
   return (
-    <div className={classes}>
-      <div className={elevation}>
-        <div className="piano-key-text">
-          <span className="piano-key-note">{note}</span>
+    <div
+      className={classNames('h-28 relative', {
+        'z-0 flex-1': isWhite,
+        'z-10': isBlack,
+      })}
+    >
+      <div
+        className={classNames(
+          'relative shadow-inset border border-opacity-50',
+          {
+            'h-full border-gray-300': isWhite,
+            'absolute h-3/5 w-3 -mx-1.5 border-gray-700': isBlack,
+          },
+          !isPressed && {
+            'bg-white text-black': isWhite,
+            'bg-black text-white': isBlack,
+          },
+          isPressed && {
+            'bg-gray-400 text-black': isWhite,
+            'bg-gray-500 text-white': isBlack,
+          }
+        )}
+      >
+        <div
+          className={classNames(
+            'absolute bottom-1 left-0 right-0 text-center cursor-default select-none',
+            {
+              'text-[0.5rem]': isWhite,
+              'text-[0.3rem]': isBlack,
+            }
+          )}
+        >
+          <span className="opacity-50">{note}</span>
           <br />
-          <kbd className="piano-key-hotkey">{hotkey}</kbd>
+          <kbd>{hotkey}</kbd>
         </div>
       </div>
     </div>
@@ -62,19 +86,21 @@ export default function MidiPiano({ input }: { input: Input }) {
     }
   }, [input])
 
+  // useEffect(() => {
+  //   setKeys({ 50: true, 54: true })
+  // }, [])
+
   return (
-    <div className="midi-piano">
-      <div>
-        {octaves.map((octave) =>
-          noteNames.map((noteName, noteIdx) => (
-            <PianoKey
-              key={`${noteName}${octave}`}
-              note={`${noteName}${octave}`}
-              pressed={keys[11 + 12 * octave + (noteIdx + 1)]}
-            />
-          ))
-        )}
-      </div>
+    <div className="flex">
+      {octaves.flatMap((octave) =>
+        noteNames.map((noteName, noteIdx) => (
+          <PianoKey
+            key={`${noteName}${octave}`}
+            note={`${noteName}${octave}`}
+            pressed={keys[11 + 12 * octave + (noteIdx + 1)]}
+          />
+        ))
+      )}
     </div>
   )
 }

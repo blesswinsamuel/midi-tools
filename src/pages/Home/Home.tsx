@@ -1,8 +1,8 @@
 import React from 'react'
 import { Card, H5 } from '@blueprintjs/core'
-import MidiRouter from '../components/main/midi-router'
-import MidiDevices from '../components/main/midi-devices'
-import MidiInstrument from '../components/main/midi-instrument'
+import MidiRouter from '../MidiRouter/MidiRouter'
+import MidiDevices from './MidiDevices'
+import MidiInstrument from './MidiInstrument'
 
 export default function Home() {
   return (

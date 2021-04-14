@@ -4,7 +4,7 @@ import { WakeLockProvider } from './components/WakeLock'
 import Layout from './components/Layout'
 import './styles/blueprint.scss'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import Home from './pages/Home'
+import Home from './pages/Home/Home'
 import MidiMonitor from './pages/MidiMonitor'
 import MidiTransmitter from './pages/MidiTransmitter'
 import MidiPlayer from './pages/MidiPlayer'
@@ -32,15 +32,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/midi-transmitter" element={<MidiTransmitter />} />
       <Route path="/midi-player" element={<MidiPlayer />} />
       <Route path="/midi-synth" element={<MidiSynth />} />
-      {/* <Route path="/about">
-      <About />
-    </Route>
-    <Route path="/:user">
-      <User />
-    </Route>
-    <Route>
-      <NoMatch />
-    </Route> */}
+      <Route path="*" element={<div>Not found</div>} />
     </Routes>
   )
 }

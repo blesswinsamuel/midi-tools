@@ -2,7 +2,7 @@ import React, { useRef } from 'react'
 import { PolySynth, ToneAudioNode } from 'tone'
 import { MidiPort } from 'webmidi'
 import { HTMLTable, Tab, Tabs } from '@blueprintjs/core'
-import { useWebMidiDevices } from '../WebMidi'
+import { useWebMidiDevices } from '../../components/WebMidi'
 
 function DeviceTable({ devices }: { devices: MidiPort[] }) {
   return (

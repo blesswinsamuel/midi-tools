@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { InputEventBase } from 'webmidi'
-import MidiDeviceSelector from '../MidiDeviceSelector'
-import useLocalStorageState from '../hooks/useLocalStorageState'
-import { useWebMidiDevice } from '../WebMidi'
+import MidiDeviceSelector from '../../components/MidiDeviceSelector'
+import useLocalStorageState from '../../components/hooks/useLocalStorageState'
+import { useWebMidiDevice } from '../../components/WebMidi'
 import { Button, ButtonGroup } from '@blueprintjs/core'
 
 export default function MidiRouter() {
