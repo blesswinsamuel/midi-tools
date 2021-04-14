@@ -1,6 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 
-export default function useAnimationState<T>(initialState: T) {
+export default function useAnimationState<S>(
+  initialState: S
+): [S, Dispatch<SetStateAction<S>>] {
   const prevStateRef = useRef(initialState)
   const animationFrameRef = useRef<number | null>(null)
   const [state, setState] = useState(initialState)

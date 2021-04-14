@@ -1,6 +1,5 @@
-// @ts-nocheck
 import WebMidi from 'webmidi'
-import TimerWorker from './worker?worker'
+import TimerWorker from './TimerWorker?worker'
 
 // https://github.com/cwilso/metronome/blob/master/js/metronome.js
 function timer() {
@@ -8,18 +7,21 @@ function timer() {
 
   let scheduleAheadTime = 100.0 // should be something like 100
   let nextNoteTime = 0.0
-  let bpm
-  let ppq
-  let timeSignature
-  let state: { clock: number; beat: number; bar: number; playing: boolean } = {
+  let bpm: number
+  let ppq: number
+  let timeSignature: [number, number]
+  type State = { clock: number; beat: number; bar: number; playing: boolean }
+  type Options = { bpm: number; ppq: number; timeSignature: [number, number] }
+  type Listener = (time: number, state: State) => void
+  let state: State = {
     bar: 0,
     beat: 0,
     clock: 0,
     playing: false,
   }
-  let listeners = []
+  let listeners: Listener[] = []
 
-  function setOptions(options) {
+  function setOptions(options: Options) {
     bpm = options.bpm
     ppq = options.ppq
     timeSignature = options.timeSignature
@@ -43,7 +45,7 @@ function timer() {
     }
   }
 
-  function scheduleNote(time, state) {
+  function scheduleNote(time: number, state: State) {
     // push the note on the queue, even if we're not playing.
     // notesInQueue.push({ note: beat, time: time })
 
@@ -77,7 +79,7 @@ function timer() {
     }
   }
 
-  const subscribe = function (listener) {
+  const subscribe = function (listener: Listener) {
     listeners.push(listener)
     return () => {
       listeners = listeners.filter((l) => l !== listener)

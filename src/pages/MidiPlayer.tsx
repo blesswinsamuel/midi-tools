@@ -1,8 +1,7 @@
-// @ts-nocheck
 import React, { useCallback, useEffect, useRef } from 'react'
-import timer from '../components/timer'
+import Timer from '../components/timer'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
-import WebMidi from 'webmidi'
+import WebMidi, { Input, InputEventControlchange, Output } from 'webmidi'
 import MidiDeviceSelector from '../components/MidiDeviceSelector'
 import useAnimationState from '../components/hooks/useAnimationState'
 import Knob from '../components/Knob'
@@ -19,51 +18,12 @@ import {
   Tag,
 } from '@blueprintjs/core'
 
-function DeviceSelector({ setDeviceIds, deviceIds }) {
-  return (
-    <ControlGroup>
-      <MidiDeviceSelector
-        mode="input"
-        label="Input"
-        value={deviceIds.input}
-        onChange={(v) => {
-          setDeviceIds((d) => ({ ...d, input: v }))
-        }}
-      />
-      <MidiDeviceSelector
-        mode="input"
-        label="Input Controller"
-        value={deviceIds.inputController}
-        onChange={(v) => {
-          setDeviceIds((d) => ({ ...d, inputController: v }))
-        }}
-      />
-      <MidiDeviceSelector
-        mode="output"
-        label="Output Controller"
-        value={deviceIds.outputController}
-        onChange={(v) => {
-          setDeviceIds((d) => ({ ...d, outputController: v }))
-        }}
-      />
-      <MidiDeviceSelector
-        mode="output"
-        label="Output"
-        value={deviceIds.output}
-        onChange={(v) => {
-          setDeviceIds((d) => ({ ...d, output: v }))
-        }}
-      />
-    </ControlGroup>
-  )
-}
-
-function TempoTapper(setTempo, start) {
-  let taps = []
-  let lastTimer = null
-  let autoTapTimer = null
+function TempoTapper(setTempo: (v: number) => void, start: () => void) {
+  let taps: number[] = []
+  let lastTimer: number | undefined = undefined
+  let autoTapTimer: number | undefined = undefined
   let maxBufferLength = 16
-  let timeSignature
+  let timeSignature: [number, number]
 
   function calculateTempo() {
     const durations = []
@@ -101,14 +61,22 @@ function TempoTapper(setTempo, start) {
     lastTimer = setTimeout(resetTaps, 2000)
   }
 
-  function setOptions(options) {
+  function setOptions(options: any) {
     timeSignature = options.timeSignature
   }
 
   return { tap, setOptions }
 }
 
-function Transport({ timer, outputController, inputController }) {
+function Transport({
+  timer,
+  outputController,
+  inputController,
+}: {
+  timer: ReturnType<typeof Timer>
+  outputController: false | Output
+  inputController: false | Input
+}) {
   const [transportState, setTransportState] = useAnimationState({
     bar: 1,
     beat: 1,
@@ -117,16 +85,16 @@ function Transport({ timer, outputController, inputController }) {
   })
 
   useEffect(() => {
-    const lightBlink = (controller, time) => {
+    const lightBlink = (controller: number, time: number) => {
       if (!outputController) return
       outputController.sendControlChange(controller, 127, 1, { time })
       outputController.sendControlChange(controller, 0, 1, { time: time + 60 })
     }
-    const enablePlayingLight = (playing, time) => {
+    const enablePlayingLight = (playing: boolean, time: number | undefined) => {
       if (!outputController) return
       outputController.sendControlChange(41, playing ? 127 : 0, 1, { time })
     }
-    enablePlayingLight(false, null)
+    enablePlayingLight(false, undefined)
     return timer.subscribe((time, { bar, beat, clock, playing }) => {
       enablePlayingLight(playing, time)
       if (!playing) {
@@ -148,18 +116,18 @@ function Transport({ timer, outputController, inputController }) {
       // console.log('CTRLR:', e.controller, e.value)
       if (e.controller.number === 41 && e.value === 127)
         // Play
-        play()
+        timer.start()
       if (e.controller.number === 42 && e.value === 127)
         // Stop
-        stop()
+        timer.stop()
       if (e.controller.number === 46 && e.value === 127)
         // Cycle (used as reset)
-        reset()
+        timer.reset()
     })
     return () => {
       inputController.removeListener('controlchange', 'all')
     }
-  }, [inputController])
+  }, [inputController, timer])
 
   const play = () => timer.start()
   const stop = () => timer.stop()
@@ -168,7 +136,7 @@ function Transport({ timer, outputController, inputController }) {
   return (
     <>
       <br />
-      <Tag style={{ fontSize: '2em', padding: '.3em' }}>
+      <Tag className="text-3xl p-1">
         <strong>
           {[
             transportState.bar.toString().padStart(3, '\xa0'),
@@ -199,7 +167,12 @@ function Transport({ timer, outputController, inputController }) {
   )
 }
 
-function usePlayer(timer, output, tempo, ppq) {
+function usePlayer(
+  timer: ReturnType<typeof Timer>,
+  output: false | Output,
+  tempo: number,
+  ppq: number
+) {
   useEffect(() => {
     return timer.subscribe((time, { bar, beat, clock, playing }) => {
       if (!playing) return
@@ -238,11 +211,17 @@ function usePlayer(timer, output, tempo, ppq) {
   }, [timer, output, tempo, ppq])
 }
 
-function MixerSlider({ inputController, controllerNumber }) {
+function MixerSlider({
+  inputController,
+  controllerNumber,
+}: {
+  inputController: false | Input
+  controllerNumber: number
+}) {
   const [value, setValue] = useAnimationState(0)
   useEffect(() => {
     if (!inputController) return
-    const listener = (e) => {
+    const listener = (e: InputEventControlchange) => {
       if (e.controller.number === controllerNumber) {
         setValue(e.value)
       }
@@ -251,7 +230,7 @@ function MixerSlider({ inputController, controllerNumber }) {
     return () => {
       inputController.removeListener('controlchange', 'all', listener)
     }
-  }, [inputController])
+  }, [inputController, controllerNumber, setValue])
   return (
     <Slider
       min={0}
@@ -265,11 +244,17 @@ function MixerSlider({ inputController, controllerNumber }) {
   )
 }
 
-function MixerKnob({ inputController, controllerNumber }) {
+function MixerKnob({
+  inputController,
+  controllerNumber,
+}: {
+  inputController: false | Input
+  controllerNumber: number
+}) {
   const [value, setValue] = useAnimationState(0)
   useEffect(() => {
     if (!inputController) return
-    const listener = (e) => {
+    const listener = (e: InputEventControlchange) => {
       if (e.controller.number === controllerNumber) {
         setValue(e.value)
       }
@@ -278,13 +263,13 @@ function MixerKnob({ inputController, controllerNumber }) {
     return () => {
       inputController.removeListener('controlchange', 'all', listener)
     }
-  }, [inputController])
+  }, [inputController, controllerNumber, setValue])
   return (
     <Knob min={0} max={127} stepSize={1} value={value} onChange={setValue} />
   )
 }
 
-function Mixer({ inputController }) {
+function Mixer({ inputController }: { inputController: false | Input }) {
   return (
     <Card>
       <ControlGroup>
@@ -302,10 +287,10 @@ function Mixer({ inputController }) {
               />
             </div>
           ))
-          .reduce(
+          .reduce<React.ReactNode>(
             (acc, x) =>
               acc === null ? (
-                [x]
+                x
               ) : (
                 <>
                   {acc}
@@ -321,41 +306,42 @@ function Mixer({ inputController }) {
 }
 
 export default function MidiPlayer() {
-  const [deviceIds, setDeviceIds] = useLocalStorageState(
-    'midi:instrument:devices',
-    {}
-  )
+  const [deviceIds, setDeviceIds] = useLocalStorageState<{
+    input?: string
+    inputController?: string
+    output?: string
+    outputController?: string
+  }>('midi:instrument:devices', {})
   const devices = {
-    input: WebMidi.getInputById(deviceIds.input),
-    inputController: WebMidi.getInputById(deviceIds.inputController),
-    outputController: WebMidi.getOutputById(deviceIds.outputController),
-    output: WebMidi.getOutputById(deviceIds.output),
+    input: WebMidi.getInputById(deviceIds.input || ''),
+    inputController: WebMidi.getInputById(deviceIds.inputController || ''),
+    outputController: WebMidi.getOutputById(deviceIds.outputController || ''),
+    output: WebMidi.getOutputById(deviceIds.output || ''),
   }
   const [tempo, setTempo] = useLocalStorageState('midi:instrument:tempo', 100)
   const [ppq, setPpq] = useLocalStorageState('midi:instrument:ppq', 96)
-  const [
-    timeSignature,
-    setTimeSignature,
-  ] = useLocalStorageState('midi:instrument:timeSignature', [4, 4])
-  const { input, inputController, outputController, output } = devices
-  const timerRef = useRef(null)
+  const [timeSignature, setTimeSignature] = useLocalStorageState<
+    [number, number]
+  >('midi:instrument:timeSignature', [4, 4])
+  const { inputController, outputController, output } = devices
+  const timerRef = useRef<ReturnType<typeof Timer> | null>(null)
   if (timerRef.current === null) {
-    timerRef.current = timer()
+    timerRef.current = Timer()
   }
-  const tempoTapper = useRef(null)
+  const tempoTapper = useRef<ReturnType<typeof TempoTapper> | null>(null)
   if (tempoTapper.current === null) {
-    tempoTapper.current = TempoTapper(setTempo, () => timerRef.current.start())
+    tempoTapper.current = TempoTapper(setTempo, () => timerRef.current!.start())
   }
-  const tapTempo = useCallback(() => tempoTapper.current.tap(), [tempoTapper])
+  const tapTempo = useCallback(() => tempoTapper.current!.tap(), [tempoTapper])
 
   useEffect(() => {
-    timerRef.current.setOptions({ ppq, bpm: tempo, timeSignature })
-    tempoTapper.current.setOptions({ timeSignature })
+    timerRef.current!.setOptions({ ppq, bpm: tempo, timeSignature })
+    tempoTapper.current!.setOptions({ timeSignature })
   }, [ppq, tempo, timeSignature])
 
   useEffect(() => {
     if (!inputController) return
-    const listener = (e) => {
+    const listener = (e: InputEventControlchange) => {
       if (e.controller.number === 45 && e.value === 127) tapTempo()
     }
     inputController.addListener('controlchange', 'all', listener)
@@ -367,7 +353,40 @@ export default function MidiPlayer() {
   usePlayer(timerRef.current, output, tempo, ppq)
   return (
     <div>
-      <DeviceSelector deviceIds={deviceIds} setDeviceIds={setDeviceIds} />
+      <ControlGroup>
+        <MidiDeviceSelector
+          mode="input"
+          label="Input"
+          value={deviceIds.input}
+          onChange={(v) => {
+            setDeviceIds((d) => ({ ...d, input: v }))
+          }}
+        />
+        <MidiDeviceSelector
+          mode="input"
+          label="Input Controller"
+          value={deviceIds.inputController}
+          onChange={(v) => {
+            setDeviceIds((d) => ({ ...d, inputController: v }))
+          }}
+        />
+        <MidiDeviceSelector
+          mode="output"
+          label="Output Controller"
+          value={deviceIds.outputController}
+          onChange={(v) => {
+            setDeviceIds((d) => ({ ...d, outputController: v }))
+          }}
+        />
+        <MidiDeviceSelector
+          mode="output"
+          label="Output"
+          value={deviceIds.output}
+          onChange={(v) => {
+            setDeviceIds((d) => ({ ...d, output: v }))
+          }}
+        />
+      </ControlGroup>
       <Divider />
       <ControlGroup>
         <NumericInput
@@ -400,7 +419,7 @@ export default function MidiPlayer() {
                 .slice(0, 2)
                 .map((i) =>
                   i === '' || isNaN((i as unknown) as number) ? 0 : parseInt(i)
-                )
+                ) as [number, number]
             )
           }
         />
