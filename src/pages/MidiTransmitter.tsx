@@ -3,7 +3,15 @@ import useLocalStorageState from '../components/hooks/useLocalStorageState'
 import WebMidi, { Output } from 'webmidi'
 import MidiDeviceSelector from '../components/MidiDeviceSelector'
 import Select from '../components/Select'
-import { Button, InputGroup, NumericInput } from '@blueprintjs/core'
+import {
+  Button,
+  Classes,
+  FormGroup,
+  HTMLTable,
+  InputGroup,
+  NumericInput,
+} from '@blueprintjs/core'
+import { classNames } from '../components/classNames'
 
 const options = [
   'playNote',
@@ -57,19 +65,21 @@ export default function MidiTransmitter() {
 
   return (
     <div>
-      <div>
+      <FormGroup label="Device">
         <MidiDeviceSelector
           mode="output"
           label="Output"
           value={deviceId}
           onChange={(v) => setDeviceId(v)}
         />
-      </div>
-      <Select
-        options={['', ...options]}
-        value={method}
-        onChange={(event) => setMethod(event.currentTarget.value)}
-      />
+      </FormGroup>
+      <FormGroup label="Event">
+        <Select
+          options={['', ...options]}
+          value={method}
+          onChange={(event) => setMethod(event.currentTarget.value)}
+        />
+      </FormGroup>
       {renderMethod(method, device, state, setState)}
     </div>
   )
@@ -311,27 +321,21 @@ const renderMethod = (
         }
       })}
     >
-      <table>
+      <HTMLTable bordered small interactive>
         <tbody>
           {m.fields.map((field) => {
             return (
               <tr key={field}>
-                <td>
+                <td className="!cursor-default">
                   <label htmlFor={field}>{field}</label>
                 </td>
-                <td>{getField(field)}</td>
+                <td className="!cursor-default">{getField(field)}</td>
               </tr>
             )
           })}
         </tbody>
-      </table>
+      </HTMLTable>
       <Button type="submit">Send</Button>
     </form>
   )
 }
-
-// const MidiTransmitter = () => {
-//   return null
-// }
-
-// export default MidiTransmitter

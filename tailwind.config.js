@@ -12,7 +12,14 @@ const fallbackFonts = ['Helvetica Neue', 'sans-serif']
 const sansFallbackFonts = [...systemFonts, ...fallbackFonts]
 const { sansFont, monoFont } = {
   sansFont: ['IBM Plex Sans', ...sansFallbackFonts],
-  monoFont: ['Consolas', 'monospace'],
+  monoFont: [
+    'ui-monospace',
+    'SFMono-Regular',
+    'Consolas',
+    'Liberation Mono',
+    'Menlo',
+    'monospace',
+  ],
 }
 
 module.exports = {

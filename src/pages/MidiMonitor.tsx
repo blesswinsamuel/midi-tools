@@ -2,7 +2,13 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
 import WebMidi, { InputEvents } from 'webmidi'
 import MidiDeviceSelector from '../components/MidiDeviceSelector'
-import { Button, Checkbox, ControlGroup, NumericInput } from '@blueprintjs/core'
+import {
+  Button,
+  Checkbox,
+  ControlGroup,
+  FormGroup,
+  NumericInput,
+} from '@blueprintjs/core'
 
 const eventTypes: { [key: string]: (e: any) => string } = {
   activesensing: (e: any) => '',
@@ -22,31 +28,14 @@ export default function MidiMonitor() {
     'midi:monitor:device',
     ''
   )
-  const [
-    selectedEventTypes,
-    setEventTypes,
-  ] = useLocalStorageState('midi:monitor:eventTypes', ['noteon'])
-  const [
-    selectedChannels,
-    setChannels,
-  ] = useLocalStorageState('midi:monitor:channels', [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8,
-    9,
-    10,
-    11,
-    12,
-    13,
-    14,
-    15,
-    16,
-  ])
+  const [selectedEventTypes, setEventTypes] = useLocalStorageState(
+    'midi:monitor:eventTypes',
+    ['noteon']
+  )
+  const [selectedChannels, setChannels] = useLocalStorageState(
+    'midi:monitor:channels',
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+  )
 
   const device = WebMidi.getInputById(deviceId)
 
@@ -104,25 +93,29 @@ export default function MidiMonitor() {
   }, [logs])
   return (
     <div>
-      <ControlGroup>
-        <MidiDeviceSelector
-          mode="input"
-          label="Input"
-          value={deviceId}
-          onChange={(v: any) => setDeviceId(v)}
-        />
-        <NumericInput
-          leftIcon="time"
-          // rightElement={<Tag minimal>bpm</Tag>}
-          placeholder="Tempo"
-          value={tempo}
-          min={32}
-          max={240}
-          onChange={(e: { target: { value: any } }) => setTempo(e.target.value)}
-        />
-        <Button onClick={clear}>Clear</Button>
-      </ControlGroup>
-      <div>
+      <FormGroup>
+        <ControlGroup>
+          <MidiDeviceSelector
+            mode="input"
+            label="Input"
+            value={deviceId}
+            onChange={(v: any) => setDeviceId(v)}
+          />
+          <NumericInput
+            leftIcon="time"
+            // rightElement={<Tag minimal>bpm</Tag>}
+            placeholder="Tempo"
+            value={tempo}
+            min={32}
+            max={240}
+            onChange={(e: { target: { value: any } }) =>
+              setTempo(e.target.value)
+            }
+          />
+          <Button onClick={clear}>Clear</Button>
+        </ControlGroup>
+      </FormGroup>
+      <FormGroup label="Event Types">
         {Object.keys(eventTypes).map((eventType) => (
           <Checkbox
             key={eventType}
@@ -141,8 +134,8 @@ export default function MidiMonitor() {
             {eventType}
           </Checkbox>
         ))}
-      </div>
-      <div>
+      </FormGroup>
+      <FormGroup label="Channels">
         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].map(
           (channel) => (
             <Checkbox
@@ -163,13 +156,12 @@ export default function MidiMonitor() {
             </Checkbox>
           )
         )}
-      </div>
+      </FormGroup>
       <pre
         ref={logRef}
-        className="bg-gray"
-        style={{ height: '500px', overflowY: 'scroll' }}
+        className="bg-black bg-opacity-20 overflow-y-scroll h-[500px]"
       >
-        <code>{logs}</code>
+        <code className="py-4 block">{logs}</code>
       </pre>
     </div>
   )
