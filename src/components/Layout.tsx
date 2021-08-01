@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { Button, Classes, Navbar } from '@blueprintjs/core'
+import { Button, Classes, Icon, Navbar } from '@blueprintjs/core'
 import { classNames } from './classNames'
 import { useWakeLock } from './WakeLock'
 
@@ -44,6 +44,15 @@ function NavBar({
             minimal
             onClick={wakeLockEnabled ? releaseWakeLock : requestWakeLock}
           />
+          <a
+            className={classNames(Classes.BUTTON, Classes.MINIMAL)}
+            href="https://github.com/blesswinsamuel/midi-tools"
+            title="GitHub - Source Code"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Icon icon={'git-branch'} />
+          </a>
         </Navbar.Group>
       </div>
     </Navbar>
