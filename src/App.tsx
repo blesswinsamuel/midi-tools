@@ -1,14 +1,24 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { WebMidiProvider } from './components/WebMidi'
 import { WakeLockProvider } from './components/WakeLock'
 import Layout from './components/Layout'
 import './styles/blueprint.scss'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 import Home from './pages/Home/Home'
 import MidiMonitor from './pages/MidiMonitor'
 import MidiTransmitter from './pages/MidiTransmitter'
 import MidiPlayer from './pages/MidiPlayer'
 import MidiSynth from './pages/MidiSynth'
+
+const Analytics = () => {
+  const { pathname, search } = useLocation()
+
+  useEffect(() => {
+    ;(window as any).goatcounter.count({ path: pathname + search })
+  }, [pathname, search])
+
+  return <></>
+}
 
 const App: React.FC = () => {
   return (
@@ -16,6 +26,7 @@ const App: React.FC = () => {
       <WebMidiProvider>
         <WakeLockProvider>
           <Layout>
+            <Analytics />
             <AppRoutes />
           </Layout>
         </WakeLockProvider>
