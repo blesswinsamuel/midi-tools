@@ -39,11 +39,8 @@ const WakeLockContext = createContext<WakeLockContextState>({
 })
 
 export const WakeLockProvider: React.FC<{}> = ({ children }) => {
-  const {
-    wakeLockEnabled,
-    requestWakeLock,
-    releaseWakeLock,
-  } = useRequestWakeLock()
+  const { wakeLockEnabled, requestWakeLock, releaseWakeLock } =
+    useRequestWakeLock()
 
   return (
     <WakeLockContext.Provider
@@ -71,7 +68,7 @@ function useRequestWakeLock() {
       wakeLockUserRequestedRef.current = true
       setWakeLockEnabled(true)
       console.log('Requested WakeLock:', wakeLock.released)
-    } catch (err) {
+    } catch (err: any) {
       // the wake lock request fails - usually system related, such low as battery
       console.error(`${err.name}, ${err.message}`)
     }
