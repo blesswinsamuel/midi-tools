@@ -33,7 +33,7 @@ module.exports = {
     },
     extend: {
       colors: {
-        gray: colors.trueGray,
+        gray: colors.neutral,
         primary: '#B1E55A',
       },
       boxShadow: {

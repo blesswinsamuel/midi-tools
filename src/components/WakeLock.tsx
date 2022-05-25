@@ -38,7 +38,9 @@ const WakeLockContext = createContext<WakeLockContextState>({
   releaseWakeLock: () => {},
 })
 
-export const WakeLockProvider: React.FC<{}> = ({ children }) => {
+export const WakeLockProvider: React.FC<{ children?: React.ReactNode }> = ({
+  children,
+}) => {
   const { wakeLockEnabled, requestWakeLock, releaseWakeLock } =
     useRequestWakeLock()
 

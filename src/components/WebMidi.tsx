@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import WebMidi, { Input, Output, WebMidiEvents } from 'webmidi'
+import { WebMidi, Input, Output, PortEvent } from 'webmidi'
 import { Position, Toaster } from '@blueprintjs/core'
 import AppError from './AppError'
 import AppSpinner from './AppSpinner'
@@ -15,11 +15,11 @@ const WebMidiContext = createContext<WebMidiContextState>({
   outputs: [],
 })
 
-export const WebMidiProvider: React.FC<{}> = ({ children }) => {
+export const WebMidiProvider: React.FC<{ children?: React.ReactNode }> = ({
+  children,
+}) => {
   const [webMidiEnabled, webMidiError] = useRequestWebMidi()
-  const { inputs, outputs } = useWebMidiDeviceConnectionListeners(
-    webMidiEnabled
-  )
+  const { inputs, outputs } = useWebMidiDeviceConnectionListeners()
 
   if (webMidiError !== null) {
     return (
@@ -48,13 +48,16 @@ function useRequestWebMidi(): [boolean, Error | null] {
       setWebMidiEnabled(true)
       return
     }
-    WebMidi.enable(function (err) {
-      if (err) {
-        setWebMidiError(err)
-      } else {
+    ;(async () => {
+      try {
+        await WebMidi.enable()
+        console.log('WebMidi enabled')
+        AppToaster.show({ message: `WebMidi enabled` })
         setWebMidiEnabled(true)
+      } catch (err) {
+        setWebMidiError(err as Error)
       }
-    })
+    })()
   }, [setWebMidiEnabled, setWebMidiError])
 
   return [webMidiEnabled, webMidiError]
@@ -64,13 +67,12 @@ export const AppToaster = Toaster.create({
   position: Position.TOP_RIGHT,
 })
 
-function useWebMidiDeviceConnectionListeners(webMidiEnabled: boolean) {
+function useWebMidiDeviceConnectionListeners() {
   const [inputs, setInputs] = useState<Input[]>([])
   const [outputs, setOutputs] = useState<Output[]>([])
 
   useEffect(() => {
-    if (!webMidiEnabled) return
-    const listener = (e: WebMidiEvents['connected' | 'disconnected']) => {
+    const listener = (e: PortEvent) => {
       AppToaster.show({ message: `${e.port.type} ${e.type} - ${e.port.name}` })
       console.log(`${e.port.type} ${e.type} - ${e.port.name}`, e)
       setInputs([...WebMidi.inputs])
@@ -79,11 +81,10 @@ function useWebMidiDeviceConnectionListeners(webMidiEnabled: boolean) {
     WebMidi.addListener('connected', listener)
     WebMidi.addListener('disconnected', listener)
     return () => {
-      if (!webMidiEnabled) return
       WebMidi.removeListener('connected', listener)
       WebMidi.removeListener('disconnected', listener)
     }
-  }, [webMidiEnabled])
+  }, [])
 
   return { inputs, outputs }
 }

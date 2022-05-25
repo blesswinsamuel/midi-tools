@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Input, InputEventNoteoff, InputEventNoteon } from 'webmidi'
+import { Input, NoteMessageEvent } from 'webmidi'
 import { classNames } from './classNames'
 
 interface IPianoKeyProps {
@@ -74,15 +74,16 @@ export default function MidiPiano({ input }: { input: Input }) {
   const [keys, setKeys] = useState<{ [key: number]: boolean }>(() => ({}))
   useEffect(() => {
     if (!input) return
-    const noteOn = (e: InputEventNoteon) =>
+    const noteOn = (e: NoteMessageEvent) =>
       setKeys((keys) => Object.assign({}, keys, { [e.note.number]: true }))
-    const noteOff = (e: InputEventNoteoff) =>
+    const noteOff = (e: NoteMessageEvent) =>
       setKeys((keys) => Object.assign({}, keys, { [e.note.number]: false }))
-    input.addListener('noteon', 'all', noteOn)
-    input.addListener('noteoff', 'all', noteOff)
+    const options = { channels: undefined }
+    input.addListener('noteon', noteOn, options)
+    input.addListener('noteoff', noteOff, options)
     return () => {
-      input.removeListener('noteon', 'all', noteOn)
-      input.removeListener('noteoff', 'all', noteOff)
+      input.removeListener('noteon', noteOn, options)
+      input.removeListener('noteoff', noteOff, options)
     }
   }, [input])
 

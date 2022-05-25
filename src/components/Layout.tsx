@@ -16,8 +16,13 @@ function NavBar({
       <NavLink
         key={href}
         to={href}
-        className={classNames(Classes.MINIMAL, Classes.BUTTON)}
-        activeClassName={Classes.ACTIVE}
+        className={({ isActive }) =>
+          classNames(
+            isActive && Classes.ACTIVE,
+            Classes.MINIMAL,
+            Classes.BUTTON
+          )
+        }
       >
         {title}
       </NavLink>
@@ -59,7 +64,7 @@ function NavBar({
   )
 }
 
-const Layout: React.FC<{}> = ({ children }) => {
+const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   useEffect(() => {
     document.body.classList.add(Classes.DARK)
     return () => {

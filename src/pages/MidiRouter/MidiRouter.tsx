@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { InputEventBase } from 'webmidi'
+import { MessageEvent } from 'webmidi'
 import MidiDeviceSelector from '../../components/MidiDeviceSelector'
 import useLocalStorageState from '../../components/hooks/useLocalStorageState'
 import { useWebMidiDevice } from '../../components/WebMidi'
@@ -20,18 +20,18 @@ export default function MidiRouter() {
 
   useEffect(() => {
     if (!deviceIn || !deviceOut) return
-    const listener = (e: InputEventBase<'midimessage'>) => {
+    const listener = (e: MessageEvent) => {
       // https://www.midi.org/specifications-old/item/table-2-expanded-messages-list-status-bytes
-      const data = Array.from(e.data.slice(1))
-      if (e.data[0] >= 0x80 && e.data[0] <= 0x9f) {
-        data[0] += transpose
+      const rawData = e.message.rawData
+      if (rawData[0] >= 0x80 && rawData[0] <= 0x9f) {
+        rawData[1] += transpose
       }
-      deviceOut.send(e.data[0], data)
+      deviceOut.send(rawData)
     }
-    deviceIn.addListener('midimessage', undefined, listener)
+    deviceIn.addListener('midimessage', listener)
     return () => {
       if (!deviceIn) return
-      deviceIn.removeListener('midimessage', undefined, listener)
+      deviceIn.removeListener('midimessage', listener)
     }
   }, [deviceIn, deviceOut, transpose])
 

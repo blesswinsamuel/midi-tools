@@ -1,4 +1,4 @@
-import WebMidi from 'webmidi'
+import { WebMidi } from 'webmidi'
 import TimerWorker from './TimerWorker?worker'
 
 // https://github.com/cwilso/metronome/blob/master/js/metronome.js

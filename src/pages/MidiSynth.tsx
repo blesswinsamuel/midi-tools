@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import WebMidi, { InputEvents } from 'webmidi'
+import { WebMidi, NoteMessageEvent } from 'webmidi'
 import MidiDeviceSelector from '../components/MidiDeviceSelector'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
 import { PolySynth } from 'tone'
@@ -54,22 +54,22 @@ export default function MidiSynth() {
 
   useEffect(() => {
     if (!devices.input) return
-    const listener: <T extends 'noteoff' | 'noteon'>(
-      event: InputEvents[T]
-    ) => void = (e) => {
+    const listener: (event: NoteMessageEvent) => void = (e) => {
       const note = e.note.name + e.note.octave
-      if (e.rawVelocity > 0) {
-        synth.current?.triggerAttack(note, undefined, e.velocity)
+      const velocity = e.rawValue || 0
+      if (velocity > 0) {
+        synth.current?.triggerAttack(note, undefined, velocity)
       } else {
         synth.current?.triggerRelease(note)
       }
     }
-    devices.input.addListener('noteon', 'all', listener)
-    devices.input.addListener('noteoff', 'all', listener)
+    const options = { channels: undefined }
+    devices.input.addListener('noteon', listener, options)
+    devices.input.addListener('noteoff', listener, options)
     return () => {
       if (!devices.input) return
-      devices.input.removeListener('noteon', 'all', listener)
-      devices.input.removeListener('noteoff', 'all', listener)
+      devices.input.removeListener('noteon', listener, options)
+      devices.input.removeListener('noteoff', listener, options)
     }
   }, [devices.input])
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
-import WebMidi, { InputEvents } from 'webmidi'
+import { WebMidi, Event } from 'webmidi'
 import MidiDeviceSelector from '../components/MidiDeviceSelector'
 import {
   Button,
@@ -47,7 +47,7 @@ export default function MidiMonitor() {
 
   useEffect(() => {
     const listener = (e: {
-      type: keyof InputEvents
+      type: keyof Event
       timestamp: number
       channel: { toString: () => string }
     }) => {
@@ -75,11 +75,13 @@ export default function MidiMonitor() {
     }
     if (device) {
       selectedEventTypes.forEach((eventType: any) => {
-        device.addListener(eventType, selectedChannels, listener)
+        device.addListener(eventType, listener, { channels: selectedChannels })
       })
       return () => {
         selectedEventTypes.forEach((eventType: any) => {
-          device.removeListener(eventType, selectedChannels, listener)
+          device.removeListener(eventType, listener, {
+            channels: selectedChannels,
+          })
         })
       }
     }

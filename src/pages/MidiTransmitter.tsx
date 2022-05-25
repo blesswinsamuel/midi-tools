@@ -1,17 +1,15 @@
 import React, { useState } from 'react'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
-import WebMidi, { Output } from 'webmidi'
+import { WebMidi, Output } from 'webmidi'
 import MidiDeviceSelector from '../components/MidiDeviceSelector'
 import Select from '../components/Select'
 import {
   Button,
-  Classes,
   FormGroup,
   HTMLTable,
   InputGroup,
   NumericInput,
 } from '@blueprintjs/core'
-import { classNames } from '../components/classNames'
 
 const options = [
   'playNote',
@@ -101,8 +99,7 @@ const methods: {
       'options.time',
       'options.velocity',
     ],
-    doIt: (device, state) =>
-      device.playNote(state.note, state.channel, state.options),
+    doIt: (device, state) => device.playNote(state.note, state.options),
   },
   send: {
     fields: ['status', 'data', 'timestamp'],
@@ -116,21 +113,12 @@ const methods: {
   sendChannelAftertouch: {
     fields: ['pressure', 'channel', 'options.time'],
     doIt: (device, state) =>
-      device.sendChannelAftertouch(
-        state.pressure,
-        state.channel,
-        state.options
-      ),
+      device.sendChannelAftertouch(state.pressure, state.options),
   },
   sendChannelMode: {
     fields: ['command', 'value', 'channel', 'options.time'],
     doIt: (device, state) =>
-      device.sendChannelMode(
-        state.command,
-        state.value,
-        state.channel,
-        state.options
-      ),
+      device.sendChannelMode(state.command, state.value, state.options),
   },
   sendClock: {
     fields: ['options.time'],
@@ -139,22 +127,16 @@ const methods: {
   sendControlChange: {
     fields: ['controller', 'value', 'channel', 'options.time'],
     doIt: (device, state) =>
-      device.sendControlChange(
-        state.controller,
-        state.value,
-        state.channel,
-        state.options
-      ),
+      device.sendControlChange(state.controller, state.value, state.options),
   },
   sendPitchBend: {
     fields: ['bend', 'channel', 'options.time'],
-    doIt: (device, state) =>
-      device.sendPitchBend(state.bend, state.channel, state.options),
+    doIt: (device, state) => device.sendPitchBend(state.bend, state.options),
   },
   sendProgramChange: {
     fields: ['program', 'channel', 'options.time'],
     doIt: (device, state) =>
-      device.sendProgramChange(state.program, state.channel, state.options),
+      device.sendProgramChange(state.program, state.options),
   },
   sendReset: {
     fields: ['options.time'],
@@ -173,8 +155,7 @@ const methods: {
       'options.time',
       'options.velocity',
     ],
-    doIt: (device, state) =>
-      device.stopNote(state.note, state.channel, state.options),
+    doIt: (device, state) => device.stopNote(state.note, state.options),
   },
 }
 
@@ -321,7 +302,7 @@ const renderMethod = (
         }
       })}
     >
-      <HTMLTable bordered small interactive>
+      <HTMLTable bordered interactive>
         <tbody>
           {m.fields.map((field) => {
             return (

@@ -1,7 +1,13 @@
 import React, { useCallback, useEffect, useRef } from 'react'
 import Timer from '../components/timer'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
-import WebMidi, { Input, InputEventControlchange, Output } from 'webmidi'
+import {
+  WebMidi,
+  Input,
+  Output,
+  ControlChangeMessageEvent,
+  Utilities,
+} from 'webmidi'
 import MidiDeviceSelector from '../components/MidiDeviceSelector'
 import useAnimationState from '../components/hooks/useAnimationState'
 import Knob from '../components/Knob'
@@ -87,12 +93,18 @@ function Transport({
   useEffect(() => {
     const lightBlink = (controller: number, time: number) => {
       if (!outputController) return
-      outputController.sendControlChange(controller, 127, 1, { time })
-      outputController.sendControlChange(controller, 0, 1, { time: time + 60 })
+      outputController.sendControlChange(controller, 127, { time, channels: 1 })
+      outputController.sendControlChange(controller, 0, {
+        time: time + 60,
+        channels: 1,
+      })
     }
     const enablePlayingLight = (playing: boolean, time: number | undefined) => {
       if (!outputController) return
-      outputController.sendControlChange(41, playing ? 127 : 0, 1, { time })
+      outputController.sendControlChange(41, playing ? 127 : 0, {
+        time,
+        channels: 1,
+      })
     }
     enablePlayingLight(false, undefined)
     return timer.subscribe((time, { bar, beat, clock, playing }) => {
@@ -112,7 +124,7 @@ function Transport({
 
   useEffect(() => {
     if (!inputController) return
-    inputController.addListener('controlchange', 'all', (e) => {
+    const listener = (e: ControlChangeMessageEvent) => {
       // console.log('CTRLR:', e.controller, e.value)
       if (e.controller.number === 41 && e.value === 127)
         // Play
@@ -123,9 +135,11 @@ function Transport({
       if (e.controller.number === 46 && e.value === 127)
         // Cycle (used as reset)
         timer.reset()
-    })
+    }
+    const options = { channels: undefined }
+    inputController.addListener('controlchange', listener, options)
     return () => {
-      inputController.removeListener('controlchange', 'all')
+      inputController.removeListener('controlchange', listener, options)
     }
   }, [inputController, timer])
 
@@ -185,28 +199,20 @@ function usePlayer(
         velocity = 80,
         length = 20
       output &&
-        output.playNote(
-          WebMidi.noteNameToNumber(noteName) + delta,
-          parseInt(channelNo),
-          {
-            rawVelocity: true,
-            velocity: velocity,
-            duration: (((length / ppq) * 60) / tempo) * 1000,
-            time: time,
-          }
-        )
+        output.playNote(Utilities.toNoteNumber(noteName) + delta, {
+          channels: parseInt(channelNo),
+          rawAttack: velocity,
+          duration: (((length / ppq) * 60) / tempo) * 1000,
+          time: time,
+        })
       if (beat % 2 === 0)
         output &&
-          output.playNote(
-            WebMidi.noteNameToNumber('D2') + delta,
-            parseInt(channelNo),
-            {
-              rawVelocity: true,
-              velocity: velocity,
-              duration: (((length / ppq) * 60) / tempo) * 1000,
-              time: time,
-            }
-          )
+          output.playNote(Utilities.toNoteNumber('D2') + delta, {
+            channels: parseInt(channelNo),
+            rawAttack: velocity,
+            duration: (((length / ppq) * 60) / tempo) * 1000,
+            time: time,
+          })
     })
   }, [timer, output, tempo, ppq])
 }
@@ -221,14 +227,15 @@ function MixerSlider({
   const [value, setValue] = useAnimationState(0)
   useEffect(() => {
     if (!inputController) return
-    const listener = (e: InputEventControlchange) => {
+    const listener = (e: ControlChangeMessageEvent) => {
       if (e.controller.number === controllerNumber) {
-        setValue(e.value)
+        setValue(e.value as number)
       }
     }
-    inputController.addListener('controlchange', 'all', listener)
+    const options = { channels: undefined }
+    inputController.addListener('controlchange', listener, options)
     return () => {
-      inputController.removeListener('controlchange', 'all', listener)
+      inputController.removeListener('controlchange', listener, options)
     }
   }, [inputController, controllerNumber, setValue])
   return (
@@ -254,14 +261,15 @@ function MixerKnob({
   const [value, setValue] = useAnimationState(0)
   useEffect(() => {
     if (!inputController) return
-    const listener = (e: InputEventControlchange) => {
+    const listener = (e: ControlChangeMessageEvent) => {
       if (e.controller.number === controllerNumber) {
-        setValue(e.value)
+        setValue(e.value as number)
       }
     }
-    inputController.addListener('controlchange', 'all', listener)
+    const options = { channels: undefined }
+    inputController.addListener('controlchange', listener, options)
     return () => {
-      inputController.removeListener('controlchange', 'all', listener)
+      inputController.removeListener('controlchange', listener, options)
     }
   }, [inputController, controllerNumber, setValue])
   return (
@@ -341,12 +349,13 @@ export default function MidiPlayer() {
 
   useEffect(() => {
     if (!inputController) return
-    const listener = (e: InputEventControlchange) => {
+    const listener = (e: ControlChangeMessageEvent) => {
       if (e.controller.number === 45 && e.value === 127) tapTempo()
     }
-    inputController.addListener('controlchange', 'all', listener)
+    const options = { channels: undefined }
+    inputController.addListener('controlchange', listener, options)
     return () => {
-      inputController.removeListener('controlchange', 'all', listener)
+      inputController.removeListener('controlchange', listener, options)
     }
   }, [tapTempo, inputController])
 
@@ -418,7 +427,7 @@ export default function MidiPlayer() {
                 .split('/')
                 .slice(0, 2)
                 .map((i) =>
-                  i === '' || isNaN((i as unknown) as number) ? 0 : parseInt(i)
+                  i === '' || isNaN(i as unknown as number) ? 0 : parseInt(i)
                 ) as [number, number]
             )
           }
