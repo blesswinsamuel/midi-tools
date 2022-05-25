@@ -5,7 +5,7 @@ import Layout from './components/Layout'
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 import Home from './pages/Home/Home'
 import MidiMonitor from './pages/MidiMonitor'
-import MidiTransmitter from './pages/MidiTransmitter'
+import MidiTransmitter from './pages/MidiTransmitter/MidiTransmitter'
 import MidiPlayer from './pages/MidiPlayer'
 import MidiSynth from './pages/MidiSynth'
 

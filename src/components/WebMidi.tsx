@@ -18,7 +18,7 @@ const WebMidiContext = createContext<WebMidiContextState>({
 export const WebMidiProvider: React.FC<{ children?: React.ReactNode }> = ({
   children,
 }) => {
-  const [webMidiEnabled, webMidiError] = useRequestWebMidi()
+  const [webMidiEnabled, webMidiError] = useRequestWebMidi({ sysex: true })
   const { inputs, outputs } = useWebMidiDeviceConnectionListeners()
 
   if (webMidiError !== null) {
@@ -39,7 +39,9 @@ export const WebMidiProvider: React.FC<{ children?: React.ReactNode }> = ({
   )
 }
 
-function useRequestWebMidi(): [boolean, Error | null] {
+export function useRequestWebMidi(options?: {
+  sysex?: boolean
+}): [boolean, Error | null] {
   const [webMidiEnabled, setWebMidiEnabled] = useState(false)
   const [webMidiError, setWebMidiError] = useState<Error | null>(null)
 
@@ -50,7 +52,7 @@ function useRequestWebMidi(): [boolean, Error | null] {
     }
     ;(async () => {
       try {
-        await WebMidi.enable()
+        await WebMidi.enable(options)
         console.log('WebMidi enabled')
         AppToaster.show({ message: `WebMidi enabled` })
         setWebMidiEnabled(true)
@@ -58,7 +60,7 @@ function useRequestWebMidi(): [boolean, Error | null] {
         setWebMidiError(err as Error)
       }
     })()
-  }, [setWebMidiEnabled, setWebMidiError])
+  }, [setWebMidiEnabled, setWebMidiError, options])
 
   return [webMidiEnabled, webMidiError]
 }

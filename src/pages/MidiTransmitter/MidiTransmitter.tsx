@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import useLocalStorageState from '../components/hooks/useLocalStorageState'
+import useLocalStorageState from '../../components/hooks/useLocalStorageState'
 import { WebMidi, Output } from 'webmidi'
-import MidiDeviceSelector from '../components/MidiDeviceSelector'
-import Select from '../components/Select'
+import MidiDeviceSelector from '../../components/MidiDeviceSelector'
+import Select from '../../components/Select'
 import {
   Button,
   FormGroup,
@@ -10,8 +10,10 @@ import {
   InputGroup,
   NumericInput,
 } from '@blueprintjs/core'
+import PsrS910 from './PsrS910'
 
 const options = [
+  'psr-s910',
   'playNote',
   'send',
   'sendActiveSensing',
@@ -40,48 +42,6 @@ const options = [
   'setTuningProgram',
   'stopNote',
 ]
-
-export const handleFormSubmit = (func: any) => (event: any) => {
-  event.preventDefault()
-  return func()
-}
-
-export default function MidiTransmitter() {
-  const [deviceId, setDeviceId] = useLocalStorageState(
-    'midi:transmitter:device',
-    ''
-  )
-  const [method, setMethod] = useLocalStorageState(
-    'midi:transmitter:method',
-    ''
-  )
-  const [state, setState] = useState({})
-
-  const device = WebMidi.getOutputById(deviceId)
-
-  console.log(device)
-
-  return (
-    <div>
-      <FormGroup label="Device">
-        <MidiDeviceSelector
-          mode="output"
-          label="Output"
-          value={deviceId}
-          onChange={(v) => setDeviceId(v)}
-        />
-      </FormGroup>
-      <FormGroup label="Event">
-        <Select
-          options={['', ...options]}
-          value={method}
-          onChange={(event) => setMethod(event.currentTarget.value)}
-        />
-      </FormGroup>
-      {renderMethod(method, device, state, setState)}
-    </div>
-  )
-}
 
 const methods: {
   [key: string]: {
@@ -179,12 +139,57 @@ const fieldTypes = {
   program: 'string', // check if this is right
 }
 
+export const handleFormSubmit = (func: any) => (event: any) => {
+  event.preventDefault()
+  return func()
+}
+
+export default function MidiTransmitter() {
+  const [deviceId, setDeviceId] = useLocalStorageState(
+    'midi:transmitter:device',
+    ''
+  )
+  const [method, setMethod] = useLocalStorageState(
+    'midi:transmitter:method',
+    ''
+  )
+  const [state, setState] = useState({})
+
+  const device = WebMidi.getOutputById(deviceId)
+
+  console.log(device)
+
+  return (
+    <div>
+      <FormGroup label="Device">
+        <MidiDeviceSelector
+          mode="output"
+          label="Output"
+          value={deviceId}
+          onChange={(v) => setDeviceId(v)}
+        />
+      </FormGroup>
+      <FormGroup label="Event">
+        <Select
+          options={['', ...options]}
+          value={method}
+          onChange={(event) => setMethod(event.currentTarget.value)}
+        />
+      </FormGroup>
+      {renderMethod(method, device, state, setState)}
+    </div>
+  )
+}
+
 const renderMethod = (
   method: string,
-  device: Output | false,
+  device: Output,
   state: any,
   setState: any
 ) => {
+  if (method === 'psr-s910') {
+    return <PsrS910 device={device} />
+  }
   const m = methods[method]
   if (!m) {
     return <div>Not implemented</div>
