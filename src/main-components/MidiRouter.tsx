@@ -1,19 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { MessageEvent } from 'webmidi'
-import MidiDeviceSelector from '../../components/MidiDeviceSelector'
-import useLocalStorageState from '../../components/hooks/useLocalStorageState'
-import { useWebMidiDevice } from '../../components/WebMidi'
+import MidiDeviceSelector from '../components/MidiDeviceSelector'
+import useLocalStorageState from '../components/hooks/useLocalStorageState'
+import { useWebMidiDevice } from '../components/WebMidi'
 import { Button, ButtonGroup } from '@blueprintjs/core'
 
 export default function MidiRouter() {
-  const [inDevice, setInDevice] = useLocalStorageState<string | undefined>(
-    'router:indevice',
-    undefined
-  )
-  const [outDevice, setOutDevice] = useLocalStorageState<string | undefined>(
-    'router:outdevice',
-    undefined
-  )
+  const [inDevice, setInDevice] = useLocalStorageState<string | undefined>('router:indevice', undefined)
+  const [outDevice, setOutDevice] = useLocalStorageState<string | undefined>('router:outdevice', undefined)
   const deviceIn = useWebMidiDevice('input', inDevice)
   const deviceOut = useWebMidiDevice('output', outDevice)
   const [transpose, setTranspose] = useState(0)
@@ -37,18 +31,8 @@ export default function MidiRouter() {
 
   return (
     <div>
-      <MidiDeviceSelector
-        mode="input"
-        label="Input"
-        value={inDevice}
-        onChange={setInDevice}
-      />
-      <MidiDeviceSelector
-        mode="output"
-        label="Output"
-        value={outDevice}
-        onChange={setOutDevice}
-      />
+      <MidiDeviceSelector mode="input" label="Input" value={inDevice} onChange={setInDevice} />
+      <MidiDeviceSelector mode="output" label="Output" value={outDevice} onChange={setOutDevice} />
       <span> </span>
       <ButtonGroup>
         <Button text="-" onClick={() => setTranspose((t) => t - 1)} />

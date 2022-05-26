@@ -2,11 +2,11 @@ import React, { useRef } from 'react'
 import { PolySynth, ToneAudioNode } from 'tone'
 import { Input, Output } from 'webmidi'
 import { HTMLTable, Tab, Tabs } from '@blueprintjs/core'
-import { useWebMidiDevices } from '../../components/WebMidi'
+import { useWebMidiDevices } from '../components/WebMidi'
 
 function DeviceTable({ devices }: { devices: (Input | Output)[] }) {
   return (
-    <HTMLTable>
+    <HTMLTable condensed bordered>
       <thead>
         <tr>
           {/* <th>Connection</th> */}

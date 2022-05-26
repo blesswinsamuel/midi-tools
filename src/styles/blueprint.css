@@ -1,5 +1,6 @@
 body.bp4-dark {
-  background: #2f343c; /* #30404d;*/
+  /* https://blueprintjs.com/docs/#core/colors */
+  background: #404854;
 }
 
 .app-spinner {

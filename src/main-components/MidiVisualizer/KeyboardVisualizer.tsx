@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Input, NoteMessageEvent } from 'webmidi'
-import { classNames } from './classNames'
+import { classNames } from '../../components/classNames'
+import useLocalStorageState from '../../components/hooks/useLocalStorageState'
+import MidiDeviceSelector from '../../components/MidiDeviceSelector'
+import { useWebMidiDevice } from '../../components/WebMidi'
 
 interface IPianoKeyProps {
   note: string
@@ -37,13 +40,10 @@ function PianoKey({ hotkey, note, pressed }: IPianoKeyProps) {
         )}
       >
         <div
-          className={classNames(
-            'absolute bottom-1 left-0 right-0 text-center cursor-default select-none',
-            {
-              'text-[0.5rem]': isWhite,
-              'text-[0.3rem]': isBlack,
-            }
-          )}
+          className={classNames('absolute bottom-1 left-0 right-0 text-center cursor-default select-none', {
+            'text-[0.5rem]': isWhite,
+            'text-[0.3rem]': isBlack,
+          })}
         >
           <span className="opacity-50">{note}</span>
           <br />
@@ -54,30 +54,15 @@ function PianoKey({ hotkey, note, pressed }: IPianoKeyProps) {
   )
 }
 
-const noteNames = [
-  'C',
-  'C#',
-  'D',
-  'D#',
-  'E',
-  'F',
-  'F#',
-  'G',
-  'G#',
-  'A',
-  'A#',
-  'B',
-]
+const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 const octaves = [0, 1, 2, 3, 4, 5, 6, 7]
 
-export default function MidiPiano({ input }: { input: Input }) {
+function PianoKeys({ input }: { input: Input }) {
   const [keys, setKeys] = useState<{ [key: number]: boolean }>(() => ({}))
   useEffect(() => {
     if (!input) return
-    const noteOn = (e: NoteMessageEvent) =>
-      setKeys((keys) => Object.assign({}, keys, { [e.note.number]: true }))
-    const noteOff = (e: NoteMessageEvent) =>
-      setKeys((keys) => Object.assign({}, keys, { [e.note.number]: false }))
+    const noteOn = (e: NoteMessageEvent) => setKeys((keys) => Object.assign({}, keys, { [e.note.number]: true }))
+    const noteOff = (e: NoteMessageEvent) => setKeys((keys) => Object.assign({}, keys, { [e.note.number]: false }))
     const options = { channels: undefined }
     input.addListener('noteon', noteOn, options)
     input.addListener('noteoff', noteOff, options)
@@ -95,13 +80,21 @@ export default function MidiPiano({ input }: { input: Input }) {
     <div className="flex">
       {octaves.flatMap((octave) =>
         noteNames.map((noteName, noteIdx) => (
-          <PianoKey
-            key={`${noteName}${octave}`}
-            note={`${noteName}${octave}`}
-            pressed={keys[11 + 12 * octave + (noteIdx + 1)]}
-          />
+          <PianoKey key={`${noteName}${octave}`} note={`${noteName}${octave}`} pressed={keys[11 + 12 * octave + (noteIdx + 1)]} />
         ))
       )}
+    </div>
+  )
+}
+
+export default function KeyboardVisualizer() {
+  const [inDevice, setInDevice] = useLocalStorageState<string | undefined>('instrument:input', undefined)
+  const deviceIn = useWebMidiDevice('input', inDevice)
+
+  return (
+    <div className="space-y-3">
+      <MidiDeviceSelector mode="input" label="Input" value={inDevice} onChange={setInDevice} />
+      <PianoKeys input={deviceIn} />
     </div>
   )
 }

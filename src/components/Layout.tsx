@@ -4,26 +4,12 @@ import { Button, Classes, Icon, Navbar } from '@blueprintjs/core'
 import { classNames } from './classNames'
 import { useWakeLock } from './WakeLock'
 
-function NavBar({
-  menuItems,
-}: {
-  menuItems: { title: string; href: string }[]
-}) {
+function NavBar({ menuItems }: { menuItems: { title: string; href: string }[] }) {
   const { wakeLockEnabled, requestWakeLock, releaseWakeLock } = useWakeLock()
 
   const renderMenuItem = ({ href, title }: { title: string; href: string }) => {
     return (
-      <NavLink
-        key={href}
-        to={href}
-        className={({ isActive }) =>
-          classNames(
-            isActive && Classes.ACTIVE,
-            Classes.MINIMAL,
-            Classes.BUTTON
-          )
-        }
-      >
+      <NavLink key={href} to={href} className={({ isActive }) => classNames(isActive && Classes.ACTIVE, Classes.MINIMAL, Classes.BUTTON)}>
         {title}
       </NavLink>
     )
@@ -33,22 +19,14 @@ function NavBar({
     <Navbar>
       <div style={{ maxWidth: '1100px', margin: 'auto', padding: '0 1em' }}>
         <Navbar.Group align="left">
-          <Link
-            to="/"
-            className={Classes.NAVBAR_HEADING}
-            style={{ textDecoration: 'none', color: 'white' }}
-          >
+          <Link to="/" className={Classes.NAVBAR_HEADING} style={{ textDecoration: 'none', color: 'white' }}>
             MIDI Tools
           </Link>
           <Navbar.Divider />
           {menuItems.map((menuItem) => renderMenuItem(menuItem))}
         </Navbar.Group>
         <Navbar.Group align="right">
-          <Button
-            icon={wakeLockEnabled ? 'eye-open' : 'eye-off'}
-            minimal
-            onClick={wakeLockEnabled ? releaseWakeLock : requestWakeLock}
-          />
+          <Button icon={wakeLockEnabled ? 'eye-open' : 'eye-off'} minimal onClick={wakeLockEnabled ? releaseWakeLock : requestWakeLock} />
           <a
             className={classNames(Classes.BUTTON, Classes.MINIMAL)}
             href="https://github.com/blesswinsamuel/midi-tools"
@@ -76,14 +54,10 @@ const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
       <NavBar
         menuItems={[
           { href: '/midi-synth', title: 'Synth' },
-          { href: '/midi-monitor', title: 'MIDI Monitor' },
-          { href: '/midi-transmitter', title: 'MIDI Transmitter' },
           { href: '/midi-player', title: 'MIDI Player' },
         ]}
       />
-      <div style={{ maxWidth: '1100px', margin: '1em auto', padding: '0 1em' }}>
-        {children}
-      </div>
+      <div style={{ maxWidth: '1100px', margin: '1em auto', padding: '0 1em' }}>{children}</div>
     </>
   )
 }
