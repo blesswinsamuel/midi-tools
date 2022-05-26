@@ -1,21 +1,12 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
-export default function useAnimationState<S>(
-  initialState: S
-): [S, Dispatch<SetStateAction<S>>] {
+export default function useAnimationState<S>(initialState: S): [S, (value: S) => void] {
   const prevStateRef = useRef(initialState)
   const animationFrameRef = useRef<number | null>(null)
   const [state, setState] = useState(initialState)
 
   const refSetState = useCallback(
-    (newState) => {
+    (newState: S) => {
       const onFrame = () => {
         if (newState !== prevStateRef.current) {
           setState(newState)

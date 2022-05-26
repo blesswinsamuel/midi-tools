@@ -8,13 +8,8 @@ export default function Knob({ max, min, onChange, value, stepSize }: any) {
   const xyRef = useRef({ x: 0, y: 0 })
 
   const getXY = useCallback(
-    (e) => {
-      const {
-        left,
-        top,
-        width,
-        height,
-      } = divRef.current.getBoundingClientRect()
+    (e: any) => {
+      const { left, top, width, height } = divRef.current.getBoundingClientRect()
       const x = e.pageX - (left + width / 2)
       const y = top + height / 2 - e.pageY
       return { x, y }
@@ -68,16 +63,8 @@ export default function Knob({ max, min, onChange, value, stepSize }: any) {
   }, [getXY, onChange, isPinching, prevValue, min, max])
 
   return (
-    <div
-      ref={divRef}
-      style={{ position: 'relative', cursor: 'grab' }}
-      onMouseDown={handleMouseDown}
-    >
-      <Spinner
-        value={(value - min) / (max - min)}
-        intent={isPinching ? Intent.PRIMARY : Intent.NONE}
-        size={40}
-      />
+    <div ref={divRef} style={{ position: 'relative', cursor: 'grab' }} onMouseDown={handleMouseDown}>
+      <Spinner value={(value - min) / (max - min)} intent={isPinching ? Intent.PRIMARY : Intent.NONE} size={40} />
       <div
         style={{
           position: 'absolute',

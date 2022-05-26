@@ -3,6 +3,7 @@ import React from 'react'
 type FormFieldProps = {
   label: string
   labelFor: string
+  children?: React.ReactNode
 }
 
 const FormField: React.FC<FormFieldProps> = ({ label, labelFor, children }) => {
