@@ -34,7 +34,7 @@ function NavBar({ menuItems }: { menuItems: { title: string; href: string }[] })
             target="_blank"
             rel="noreferrer"
           >
-            <Icon icon={'git-branch'} />
+            <Icon icon={'git-repo'} />
           </a>
         </Navbar.Group>
       </div>

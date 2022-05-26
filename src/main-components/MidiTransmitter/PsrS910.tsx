@@ -1,7 +1,6 @@
-import { Button, ButtonGroup, Divider, HTMLSelect } from '@blueprintjs/core'
+import { Button, ButtonGroup, FormGroup, H3, H5 } from '@blueprintjs/core'
 import React from 'react'
 import { Output } from 'webmidi'
-import Select from '../../components/Select'
 
 const YAMAHA_ID = 0x43
 
@@ -612,89 +611,83 @@ export default function PsrS910({ device }: { device: Output }) {
   const ENDING_SWITCH: { [k: string]: number } = { A: 0x20, B: 0x21, C: 0x22, D: 0x23 }
   return (
     <div>
-      <div style={{ display: 'flex' }}>
-        <ButtonGroup>
-          <Button minimal style={{ pointerEvents: 'none' }}>
-            Intro
-          </Button>
-          {Object.keys(INTRO_SWITCH).map((v) => {
-            return (
-              <Button key={v} onClick={() => device.sendSysex(YAMAHA_ID, [SYSEX_STYLE, 0x00, INTRO_SWITCH[v], SWITCH_ON])}>
-                {v}
-              </Button>
-            )
-          })}
-        </ButtonGroup>
-        <Divider />
+      <div style={{ display: 'flex', gap: '12px' }}>
+        <FormGroup label="Intro">
+          <ButtonGroup>
+            {Object.keys(INTRO_SWITCH).map((v) => {
+              return (
+                <Button key={v} onClick={() => device.sendSysex(YAMAHA_ID, [SYSEX_STYLE, 0x00, INTRO_SWITCH[v], SWITCH_ON])}>
+                  {v}
+                </Button>
+              )
+            })}
+          </ButtonGroup>
+        </FormGroup>
 
-        <ButtonGroup>
-          <Button minimal style={{ pointerEvents: 'none' }}>
-            Main
-          </Button>
-          {Object.keys(MAIN_SWITCH).map((v) => {
-            return (
-              <Button key={v} onClick={() => device.sendSysex(YAMAHA_ID, [SYSEX_STYLE, 0x00, MAIN_SWITCH[v], SWITCH_ON])}>
-                {v}
-              </Button>
-            )
-          })}
-        </ButtonGroup>
-        <Divider />
+        <FormGroup label="Main">
+          <ButtonGroup>
+            {Object.keys(MAIN_SWITCH).map((v) => {
+              return (
+                <Button key={v} onClick={() => device.sendSysex(YAMAHA_ID, [SYSEX_STYLE, 0x00, MAIN_SWITCH[v], SWITCH_ON])}>
+                  {v}
+                </Button>
+              )
+            })}
+          </ButtonGroup>
+        </FormGroup>
 
-        <ButtonGroup>
-          <Button minimal style={{ pointerEvents: 'none' }}>
-            Fill In
-          </Button>
-          {Object.keys(FILL_IN_SWITCH).map((v) => {
-            return (
-              <Button key={v} onClick={() => device.sendSysex(YAMAHA_ID, [SYSEX_STYLE, 0x00, FILL_IN_SWITCH[v], SWITCH_ON])}>
-                {v}
-              </Button>
-            )
-          })}
-        </ButtonGroup>
-        <Divider />
+        <FormGroup label="Fill In">
+          <ButtonGroup>
+            {Object.keys(FILL_IN_SWITCH).map((v) => {
+              return (
+                <Button key={v} onClick={() => device.sendSysex(YAMAHA_ID, [SYSEX_STYLE, 0x00, FILL_IN_SWITCH[v], SWITCH_ON])}>
+                  {v}
+                </Button>
+              )
+            })}
+          </ButtonGroup>
+        </FormGroup>
 
-        <ButtonGroup>
-          <Button onClick={() => device.sendSysex(YAMAHA_ID, [SYSEX_STYLE, 0x00, BREAK_SWITCH, SWITCH_ON])}>Break</Button>
-        </ButtonGroup>
-        <Divider />
+        <FormGroup label="Break">
+          <ButtonGroup>
+            <Button onClick={() => device.sendSysex(YAMAHA_ID, [SYSEX_STYLE, 0x00, BREAK_SWITCH, SWITCH_ON])}>Break</Button>
+          </ButtonGroup>
+        </FormGroup>
 
-        <ButtonGroup>
-          <Button minimal style={{ pointerEvents: 'none' }}>
-            Ending
-          </Button>
-          {Object.keys(ENDING_SWITCH).map((v) => {
-            return (
-              <Button key={v} onClick={() => device.sendSysex(YAMAHA_ID, [SYSEX_STYLE, 0x00, ENDING_SWITCH[v], SWITCH_ON])}>
-                {v}
-              </Button>
-            )
-          })}
-        </ButtonGroup>
-        <Divider />
+        <FormGroup label="Ending">
+          <ButtonGroup>
+            {Object.keys(ENDING_SWITCH).map((v) => {
+              return (
+                <Button key={v} onClick={() => device.sendSysex(YAMAHA_ID, [SYSEX_STYLE, 0x00, ENDING_SWITCH[v], SWITCH_ON])}>
+                  {v}
+                </Button>
+              )
+            })}
+          </ButtonGroup>
+        </FormGroup>
       </div>
-      <div>
+
+      <H3>Voice</H3>
+      <div style={{ display: 'flex', gap: '12px', flexDirection: 'column' }}>
         {VOICE_LIST.map((category) => (
           <div key={category.category}>
-            <div>
-              <Button minimal style={{ pointerEvents: 'none' }}>
-                {category.category}
-              </Button>
+            <H5>{category.category}</H5>
+            <div style={{ display: 'flex', columnGap: '1%', rowGap: '10px', flexWrap: 'wrap' }}>
+              {category.voices.map((voice) => (
+                <Button
+                  key={voice.name + voice.type}
+                  onClick={() => {
+                    console.log(voice)
+                    device.sendControlChange('bankselectcoarse', voice.msb)
+                    device.sendControlChange('bankselectfine', voice.lsb)
+                    device.sendProgramChange(voice.prg - 1)
+                  }}
+                  style={{ width: '19.2%' }}
+                >
+                  {voice.name} <i>{voice.type}</i>
+                </Button>
+              ))}
             </div>
-            {category.voices.map((voice) => (
-              <Button
-                key={voice.name + voice.type}
-                onClick={() => {
-                  console.log(voice)
-                  device.sendControlChange('bankselectcoarse', voice.msb)
-                  device.sendControlChange('bankselectfine', voice.lsb)
-                  device.sendProgramChange(voice.prg - 1)
-                }}
-              >
-                {voice.name}
-              </Button>
-            ))}
           </div>
         ))}
       </div>

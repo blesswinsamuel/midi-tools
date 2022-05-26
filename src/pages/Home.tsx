@@ -1,11 +1,11 @@
 import React from 'react'
 import { Card, Collapse, H5, Switch } from '@blueprintjs/core'
-import MidiRouter from '../../main-components/MidiRouter'
-import MidiDevices from '../../main-components/MidiDevices'
-import useLocalStorageState from '../../components/hooks/useLocalStorageState'
-import KeyboardVisualizer from '../../main-components/MidiVisualizer/KeyboardVisualizer'
-import MidiMonitor from '../../main-components/MidiMonitor'
-import MidiTransmitter from '../../main-components/MidiTransmitter/MidiTransmitter'
+import MidiRouter from '../main-components/MidiRouter'
+import MidiDevices from '../main-components/MidiDevices'
+import useLocalStorageState from '../components/hooks/useLocalStorageState'
+import KeyboardVisualizer from '../main-components/MidiVisualizer/KeyboardVisualizer'
+import MidiMonitor from '../main-components/MidiMonitor'
+import MidiTransmitter from '../main-components/MidiTransmitter/MidiTransmitter'
 
 export default function Home() {
   const [midiRouterOpen, setMidiRouterOpen] = useLocalStorageState('midi-router-open', true)

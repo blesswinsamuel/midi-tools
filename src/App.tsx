@@ -3,7 +3,7 @@ import { WebMidiProvider } from './components/WebMidi'
 import { WakeLockProvider } from './components/WakeLock'
 import Layout from './components/Layout'
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
-import Home from './pages/Home/Home'
+import Home from './pages/Home'
 import MidiPlayer from './pages/MidiPlayer'
 import MidiSynth from './pages/MidiSynth'
 

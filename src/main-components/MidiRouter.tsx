@@ -3,7 +3,7 @@ import { MessageEvent } from 'webmidi'
 import MidiDeviceSelector from '../components/MidiDeviceSelector'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
 import { useWebMidiDevice } from '../components/WebMidi'
-import { Button, ButtonGroup } from '@blueprintjs/core'
+import { Button, ButtonGroup, FormGroup } from '@blueprintjs/core'
 
 export default function MidiRouter() {
   const [inDevice, setInDevice] = useLocalStorageState<string | undefined>('router:indevice', undefined)
@@ -30,15 +30,16 @@ export default function MidiRouter() {
   }, [deviceIn, deviceOut, transpose])
 
   return (
-    <div>
+    <div style={{ display: 'flex', gap: '12px' }}>
       <MidiDeviceSelector mode="input" label="Input" value={inDevice} onChange={setInDevice} />
       <MidiDeviceSelector mode="output" label="Output" value={outDevice} onChange={setOutDevice} />
-      <span> </span>
-      <ButtonGroup>
-        <Button text="-" onClick={() => setTranspose((t) => t - 1)} />
-        <Button text={transpose} minimal onClick={() => setTranspose(0)} />
-        <Button text="+" onClick={() => setTranspose((t) => t + 1)} />
-      </ButtonGroup>
+      <FormGroup label="Transpose">
+        <ButtonGroup>
+          <Button text="-" onClick={() => setTranspose((t) => t - 1)} />
+          <Button text={transpose} minimal onClick={() => setTranspose(0)} />
+          <Button text="+" onClick={() => setTranspose((t) => t + 1)} />
+        </ButtonGroup>
+      </FormGroup>
     </div>
   )
 }

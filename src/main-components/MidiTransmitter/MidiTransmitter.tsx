@@ -129,12 +129,12 @@ export default function MidiTransmitter() {
 
   return (
     <div>
-      <FormGroup label="Device">
+      <div style={{ display: 'flex', gap: '12px' }}>
         <MidiDeviceSelector mode="output" label="Output" value={deviceId} onChange={(v) => setDeviceId(v)} />
-      </FormGroup>
-      <FormGroup label="Event">
-        <Select options={['', ...options]} value={method} onChange={(event) => setMethod(event.currentTarget.value)} />
-      </FormGroup>
+        <FormGroup label="Event" labelFor="event">
+          <Select id="event" options={['', ...options]} value={method} onChange={(event) => setMethod(event.currentTarget.value)} />
+        </FormGroup>
+      </div>
       {renderMethod(method, device, state, setState)}
     </div>
   )
