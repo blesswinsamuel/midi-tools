@@ -79,18 +79,24 @@ export default function MidiMonitor() {
   return (
     <div>
       <FormGroup>
-        <ControlGroup>
+        <ControlGroup style={{ gap: '12px' }}>
           <MidiDeviceSelector mode="input" label="Input" value={deviceId} onChange={(v: any) => setDeviceId(v)} />
-          <NumericInput
-            leftIcon="time"
-            // rightElement={<Tag minimal>bpm</Tag>}
-            placeholder="Tempo"
-            value={tempo}
-            min={32}
-            max={240}
-            onChange={(e: { target: { value: any } }) => setTempo(e.target.value)}
-          />
-          <Button onClick={clear}>Clear</Button>
+
+          <FormGroup label="Tempo" labelFor="tempo">
+            <NumericInput
+              id="tempo"
+              leftIcon="time"
+              // rightElement={<Tag minimal>bpm</Tag>}
+              placeholder="Tempo"
+              value={tempo}
+              min={32}
+              max={240}
+              onChange={(e: { target: { value: any } }) => setTempo(e.target.value)}
+            />
+          </FormGroup>
+          <FormGroup label="‎">
+            <Button onClick={clear}>Clear</Button>
+          </FormGroup>
         </ControlGroup>
       </FormGroup>
       <FormGroup label="Event Types">
