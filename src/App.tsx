@@ -5,7 +5,6 @@ import Layout from './components/Layout'
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import MidiPlayer from './pages/MidiPlayer'
-import MidiSynth from './pages/MidiSynth'
 
 const Analytics = () => {
   const { pathname, search } = useLocation()
@@ -37,7 +36,6 @@ const AppRoutes: React.FC = () => {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/midi-player" element={<MidiPlayer />} />
-      <Route path="/midi-synth" element={<MidiSynth />} />
       <Route path="*" element={<div>Not found</div>} />
     </Routes>
   )

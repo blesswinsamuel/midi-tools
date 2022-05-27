@@ -51,12 +51,7 @@ const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   }, [])
   return (
     <>
-      <NavBar
-        menuItems={[
-          { href: '/midi-synth', title: 'Synth' },
-          { href: '/midi-player', title: 'MIDI Player' },
-        ]}
-      />
+      <NavBar menuItems={[{ href: '/midi-player', title: 'MIDI Player' }]} />
       <div style={{ maxWidth: '1100px', margin: '1em auto', padding: '0 1em' }}>{children}</div>
     </>
   )

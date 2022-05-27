@@ -125,8 +125,6 @@ export default function MidiTransmitter() {
 
   const device = WebMidi.getOutputById(deviceId)
 
-  console.log(device)
-
   return (
     <div>
       <div style={{ display: 'flex', gap: '12px' }}>

@@ -15,33 +15,21 @@ const WebMidiContext = createContext<WebMidiContextState>({
   outputs: [],
 })
 
-export const WebMidiProvider: React.FC<{ children?: React.ReactNode }> = ({
-  children,
-}) => {
+export const WebMidiProvider: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const [webMidiEnabled, webMidiError] = useRequestWebMidi({ sysex: true })
   const { inputs, outputs } = useWebMidiDeviceConnectionListeners()
 
   if (webMidiError !== null) {
-    return (
-      <AppError
-        error={`Error initializing Web MIDI: ${webMidiError.message}`}
-      />
-    )
+    return <AppError error={`Error initializing Web MIDI: ${webMidiError.message}`} />
   }
   if (!webMidiEnabled) {
     return <AppSpinner>Enabling WebMidi</AppSpinner>
   }
 
-  return (
-    <WebMidiContext.Provider value={{ inputs, outputs }}>
-      {children}
-    </WebMidiContext.Provider>
-  )
+  return <WebMidiContext.Provider value={{ inputs, outputs }}>{children}</WebMidiContext.Provider>
 }
 
-export function useRequestWebMidi(options?: {
-  sysex?: boolean
-}): [boolean, Error | null] {
+export function useRequestWebMidi(options?: { sysex?: boolean }): [boolean, Error | null] {
   const [webMidiEnabled, setWebMidiEnabled] = useState(false)
   const [webMidiError, setWebMidiError] = useState<Error | null>(null)
 
@@ -108,10 +96,7 @@ export function useWebMidiDevice(io: 'output', id?: string): Output
 //   io: T,
 //   id: string
 // ): Input | Output {
-export function useWebMidiDevice(
-  io: 'input' | 'output',
-  id?: string
-): Input | Output | undefined {
+export function useWebMidiDevice(io: 'input' | 'output', id?: string): Input | Output | undefined {
   const { inputs, outputs } = useWebMidiDevices()
   switch (io) {
     case 'input':

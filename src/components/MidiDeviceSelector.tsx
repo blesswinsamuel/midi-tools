@@ -15,7 +15,8 @@ export default function MidiDeviceSelector({ label, mode, value, onChange }: Mid
   const options = devices[{ input: 'inputs', output: 'outputs' }[mode] as 'inputs' | 'outputs']
   const id = useRef((Math.random() + 1).toString(36).substring(7))
   return (
-    <FormGroup label={titleCase(mode + ' device')} labelFor={id.current}>
+    // titleCase(mode + ' device')
+    <FormGroup label={label} labelFor={id.current}>
       <Select
         id={id.current}
         value={value}
@@ -27,8 +28,8 @@ export default function MidiDeviceSelector({ label, mode, value, onChange }: Mid
     </FormGroup>
   )
 }
-function titleCase(str: string) {
-  return str.replace(/(^|\s)\S/g, function (t) {
-    return t.toUpperCase()
-  })
-}
+// function titleCase(str: string) {
+//   return str.replace(/(^|\s)\S/g, function (t) {
+//     return t.toUpperCase()
+//   })
+// }
