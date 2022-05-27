@@ -57,7 +57,7 @@ function PianoKey({ hotkey, note, pressed }: IPianoKeyProps) {
 const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 const octaves = [0, 1, 2, 3, 4, 5, 6, 7]
 
-function PianoKeys({ input }: { input: Input }) {
+export default function KeyboardVisualizer({ input }: { input: Input }) {
   const [keys, setKeys] = useState<{ [key: number]: boolean }>(() => ({}))
   useEffect(() => {
     if (!input) return
@@ -83,18 +83,6 @@ function PianoKeys({ input }: { input: Input }) {
           <PianoKey key={`${noteName}${octave}`} note={`${noteName}${octave}`} pressed={keys[11 + 12 * octave + (noteIdx + 1)]} />
         ))
       )}
-    </div>
-  )
-}
-
-export default function KeyboardVisualizer() {
-  const [inDevice, setInDevice] = useLocalStorageState<string | undefined>('instrument:input', undefined)
-  const deviceIn = useWebMidiDevice('input', inDevice)
-
-  return (
-    <div className="space-y-3">
-      <MidiDeviceSelector mode="input" label="Input" value={inDevice} onChange={setInDevice} />
-      <PianoKeys input={deviceIn} />
     </div>
   )
 }

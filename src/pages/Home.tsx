@@ -3,9 +3,9 @@ import { Card, Collapse, H5, Switch } from '@blueprintjs/core'
 import MidiRouter from '../main-components/MidiRouter'
 import MidiDevices from '../main-components/MidiDevices'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
-import KeyboardVisualizer from '../main-components/MidiVisualizer/KeyboardVisualizer'
 import MidiMonitor from '../main-components/MidiMonitor'
 import MidiTransmitter from '../main-components/MidiTransmitter/MidiTransmitter'
+import MidiVisualizer from '../main-components/MidiVisualizer/MidiVisualizer'
 
 export default function Home() {
   const [midiRouterOpen, setMidiRouterOpen] = useLocalStorageState('midi-router-open', true)
@@ -36,7 +36,7 @@ export default function Home() {
           <Switch checked={keyboardVisualizerOpen} label="MIDI Visualizer" onChange={() => setKeyboardVisualizerOpen((v) => !v)} alignIndicator="right" large />
         </H5>
         <Collapse isOpen={keyboardVisualizerOpen}>
-          <KeyboardVisualizer />
+          <MidiVisualizer />
         </Collapse>
       </Card>
       <Card style={{ marginBottom: '10px' }}>

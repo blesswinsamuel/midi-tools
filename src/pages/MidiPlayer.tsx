@@ -1,28 +1,11 @@
 import React, { useCallback, useEffect, useRef } from 'react'
 import Timer from '../components/timer'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
-import {
-  WebMidi,
-  Input,
-  Output,
-  ControlChangeMessageEvent,
-  Utilities,
-} from 'webmidi'
+import { WebMidi, Input, Output, ControlChangeMessageEvent, Utilities } from 'webmidi'
 import MidiDeviceSelector from '../components/MidiDeviceSelector'
 import useAnimationState from '../components/hooks/useAnimationState'
 import Knob from '../components/Knob'
-import {
-  Button,
-  ButtonGroup,
-  Card,
-  ControlGroup,
-  Divider,
-  InputGroup,
-  Intent,
-  NumericInput,
-  Slider,
-  Tag,
-} from '@blueprintjs/core'
+import { Button, ButtonGroup, Card, ControlGroup, Divider, InputGroup, Intent, NumericInput, Slider, Tag } from '@blueprintjs/core'
 
 function TempoTapper(setTempo: (v: number) => void, start: () => void) {
   let taps: number[] = []
@@ -162,12 +145,7 @@ function Transport({
       <br />
       <br />
       <ButtonGroup>
-        <Button
-          icon="play"
-          onClick={play}
-          intent={transportState.playing ? Intent.SUCCESS : undefined}
-          active={transportState.playing}
-        >
+        <Button icon="play" onClick={play} intent={transportState.playing ? Intent.SUCCESS : undefined} active={transportState.playing}>
           Play
         </Button>
         <Button icon="stop" onClick={stop}>
@@ -181,12 +159,7 @@ function Transport({
   )
 }
 
-function usePlayer(
-  timer: ReturnType<typeof Timer>,
-  output: false | Output,
-  tempo: number,
-  ppq: number
-) {
+function usePlayer(timer: ReturnType<typeof Timer>, output: false | Output, tempo: number, ppq: number) {
   useEffect(() => {
     return timer.subscribe((time, { bar, beat, clock, playing }) => {
       if (!playing) return
@@ -217,102 +190,6 @@ function usePlayer(
   }, [timer, output, tempo, ppq])
 }
 
-function MixerSlider({
-  inputController,
-  controllerNumber,
-}: {
-  inputController: false | Input
-  controllerNumber: number
-}) {
-  const [value, setValue] = useAnimationState(0)
-  useEffect(() => {
-    if (!inputController) return
-    const listener = (e: ControlChangeMessageEvent) => {
-      if (e.controller.number === controllerNumber) {
-        setValue(e.value as number)
-      }
-    }
-    const options = { channels: undefined }
-    inputController.addListener('controlchange', listener, options)
-    return () => {
-      inputController.removeListener('controlchange', listener, options)
-    }
-  }, [inputController, controllerNumber, setValue])
-  return (
-    <Slider
-      min={0}
-      max={127}
-      stepSize={1}
-      labelStepSize={16}
-      onChange={(v) => setValue(v)}
-      value={value}
-      vertical
-    />
-  )
-}
-
-function MixerKnob({
-  inputController,
-  controllerNumber,
-}: {
-  inputController: false | Input
-  controllerNumber: number
-}) {
-  const [value, setValue] = useAnimationState(0)
-  useEffect(() => {
-    if (!inputController) return
-    const listener = (e: ControlChangeMessageEvent) => {
-      if (e.controller.number === controllerNumber) {
-        setValue(e.value as number)
-      }
-    }
-    const options = { channels: undefined }
-    inputController.addListener('controlchange', listener, options)
-    return () => {
-      inputController.removeListener('controlchange', listener, options)
-    }
-  }, [inputController, controllerNumber, setValue])
-  return (
-    <Knob min={0} max={127} stepSize={1} value={value} onChange={setValue} />
-  )
-}
-
-function Mixer({ inputController }: { inputController: false | Input }) {
-  return (
-    <Card>
-      <ControlGroup>
-        {Array.of(0, 1, 2, 3, 4, 5, 6, 7)
-          .map((n) => (
-            <div key={n}>
-              <MixerKnob
-                inputController={inputController}
-                controllerNumber={n + 16}
-              />
-              <Divider />
-              <MixerSlider
-                inputController={inputController}
-                controllerNumber={n}
-              />
-            </div>
-          ))
-          .reduce<React.ReactNode>(
-            (acc, x) =>
-              acc === null ? (
-                x
-              ) : (
-                <>
-                  {acc}
-                  <Divider style={{ margin: '1em' }} />
-                  {x}
-                </>
-              ),
-            null
-          )}
-      </ControlGroup>
-    </Card>
-  )
-}
-
 export default function MidiPlayer() {
   const [deviceIds, setDeviceIds] = useLocalStorageState<{
     input?: string
@@ -328,9 +205,7 @@ export default function MidiPlayer() {
   }
   const [tempo, setTempo] = useLocalStorageState('midi:instrument:tempo', 100)
   const [ppq, setPpq] = useLocalStorageState('midi:instrument:ppq', 96)
-  const [timeSignature, setTimeSignature] = useLocalStorageState<
-    [number, number]
-  >('midi:instrument:timeSignature', [4, 4])
+  const [timeSignature, setTimeSignature] = useLocalStorageState<[number, number]>('midi:instrument:timeSignature', [4, 4])
   const { inputController, outputController, output } = devices
   const timerRef = useRef<ReturnType<typeof Timer> | null>(null)
   if (timerRef.current === null) {
@@ -426,20 +301,13 @@ export default function MidiPlayer() {
               e.target.value
                 .split('/')
                 .slice(0, 2)
-                .map((i) =>
-                  i === '' || isNaN(i as unknown as number) ? 0 : parseInt(i)
-                ) as [number, number]
+                .map((i) => (i === '' || isNaN(i as unknown as number) ? 0 : parseInt(i))) as [number, number]
             )
           }
         />
       </ControlGroup>
-      <Transport
-        outputController={outputController}
-        inputController={inputController}
-        timer={timerRef.current}
-      />
+      <Transport outputController={outputController} inputController={inputController} timer={timerRef.current} />
       <Divider />
-      <Mixer inputController={inputController} />
     </div>
   )
 }
