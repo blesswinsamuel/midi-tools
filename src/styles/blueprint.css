@@ -2,7 +2,3 @@ body.bp4-dark {
   /* https://blueprintjs.com/docs/#core/colors */
   background: #404854;
 }
-
-.app-spinner {
-  height: 50vh;
-}
