@@ -10,7 +10,9 @@ const Analytics = () => {
   const { pathname, search } = useLocation()
 
   useEffect(() => {
-    ;(window as any).goatcounter.count({ path: pathname + search })
+    const goatcounter = (window as any).goatcounter
+    if (!goatcounter.count) return
+    goatcounter.count({ path: pathname + search })
   }, [pathname, search])
 
   return <></>
