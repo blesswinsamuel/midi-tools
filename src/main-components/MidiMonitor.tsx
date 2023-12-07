@@ -1,8 +1,8 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import useLocalStorageState from '../components/hooks/useLocalStorageState'
-import { WebMidi, Event, ControlChangeMessageEvent, NoteMessageEvent, MessageEvent } from 'webmidi'
-import MidiDeviceSelector from '../components/MidiDeviceSelector'
 import { Button, Checkbox, ControlGroup, FormGroup, NumericInput } from '@blueprintjs/core'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { ControlChangeMessageEvent, Event, MessageEvent, NoteMessageEvent, WebMidi } from 'webmidi'
+import MidiDeviceSelector from '../components/MidiDeviceSelector'
+import useLocalStorageState from '../components/hooks/useLocalStorageState'
 
 const eventTypes: { [key: string]: (e: any) => string } = {
   activesensing: (e: any) => '',

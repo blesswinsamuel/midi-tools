@@ -1,9 +1,8 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-import { WebMidi, Input, Output, PortEvent } from 'webmidi'
-import { Position, Toaster } from '@blueprintjs/core'
+import { OverlayToaster, Position } from '@blueprintjs/core'
+import React, { createContext, useContext, useEffect, useState } from 'react'
+import { Input, Output, PortEvent, WebMidi } from 'webmidi'
 import AppError from './AppError'
 import AppSpinner from './AppSpinner'
-import React from 'react'
 
 type WebMidiContextState = {
   inputs: Input[]
@@ -48,13 +47,14 @@ export function useRequestWebMidi(options?: { sysex?: boolean }): [boolean, Erro
         setWebMidiError(err as Error)
       }
     })()
-  }, [setWebMidiEnabled, setWebMidiError, options])
+  }, [setWebMidiEnabled, setWebMidiError, JSON.stringify(options)])
 
   return [webMidiEnabled, webMidiError]
 }
 
-export const AppToaster = Toaster.create({
+export const AppToaster = OverlayToaster.create({
   position: Position.TOP_RIGHT,
+  className: '!fixed',
 })
 
 function useWebMidiDeviceConnectionListeners() {

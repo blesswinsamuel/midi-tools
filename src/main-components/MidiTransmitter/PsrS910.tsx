@@ -609,6 +609,13 @@ export default function PsrS910({ device }: { device: Output }) {
   const FILL_IN_SWITCH: { [k: string]: number } = { A: 0x10, B: 0x11, C: 0x12, D: 0x13 }
   const BREAK_SWITCH = 0x18
   const ENDING_SWITCH: { [k: string]: number } = { A: 0x20, B: 0x21, C: 0x22, D: 0x23 }
+
+  const sendMsg = async (message: number, fillIn: boolean = true) => {
+    device.sendSysex(YAMAHA_ID, [SYSEX_STYLE, 0x00, message, SWITCH_ON])
+    if (fillIn) {
+      device.sendSysex(YAMAHA_ID, [SYSEX_STYLE, 0x00, message, SWITCH_OFF])
+    }
+  }
   return (
     <div>
       <div style={{ display: 'flex', gap: '12px' }}>
@@ -616,7 +623,7 @@ export default function PsrS910({ device }: { device: Output }) {
           <ButtonGroup>
             {Object.keys(INTRO_SWITCH).map((v) => {
               return (
-                <Button key={v} onClick={() => device.sendSysex(YAMAHA_ID, [SYSEX_STYLE, 0x00, INTRO_SWITCH[v], SWITCH_ON])}>
+                <Button key={v} onClick={() => sendMsg(INTRO_SWITCH[v])}>
                   {v}
                 </Button>
               )
@@ -628,7 +635,7 @@ export default function PsrS910({ device }: { device: Output }) {
           <ButtonGroup>
             {Object.keys(MAIN_SWITCH).map((v) => {
               return (
-                <Button key={v} onClick={() => device.sendSysex(YAMAHA_ID, [SYSEX_STYLE, 0x00, MAIN_SWITCH[v], SWITCH_ON])}>
+                <Button key={v} onClick={() => sendMsg(MAIN_SWITCH[v], false)}>
                   {v}
                 </Button>
               )
@@ -640,7 +647,7 @@ export default function PsrS910({ device }: { device: Output }) {
           <ButtonGroup>
             {Object.keys(FILL_IN_SWITCH).map((v) => {
               return (
-                <Button key={v} onClick={() => device.sendSysex(YAMAHA_ID, [SYSEX_STYLE, 0x00, FILL_IN_SWITCH[v], SWITCH_ON])}>
+                <Button key={v} onClick={() => sendMsg(FILL_IN_SWITCH[v])}>
                   {v}
                 </Button>
               )
@@ -650,7 +657,7 @@ export default function PsrS910({ device }: { device: Output }) {
 
         <FormGroup label="Break">
           <ButtonGroup>
-            <Button onClick={() => device.sendSysex(YAMAHA_ID, [SYSEX_STYLE, 0x00, BREAK_SWITCH, SWITCH_ON])}>Break</Button>
+            <Button onClick={() => sendMsg(BREAK_SWITCH)}>Break</Button>
           </ButtonGroup>
         </FormGroup>
 
@@ -658,7 +665,7 @@ export default function PsrS910({ device }: { device: Output }) {
           <ButtonGroup>
             {Object.keys(ENDING_SWITCH).map((v) => {
               return (
-                <Button key={v} onClick={() => device.sendSysex(YAMAHA_ID, [SYSEX_STYLE, 0x00, ENDING_SWITCH[v], SWITCH_ON])}>
+                <Button key={v} onClick={() => sendMsg(ENDING_SWITCH[v])}>
                   {v}
                 </Button>
               )

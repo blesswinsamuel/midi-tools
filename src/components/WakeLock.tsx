@@ -1,33 +1,7 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
-
-type WakeLockType = 'screen'
-
-interface WakeLockSentinel extends EventTarget {
-  readonly released: boolean
-  readonly type: WakeLockType
-  release(): Promise<undefined>
-  onrelease: EventListener
-}
-
-interface WakeLock {
-  request(type: WakeLockType): Promise<WakeLockSentinel>
-}
-
-declare global {
-  interface Navigator {
-    readonly wakeLock: WakeLock
-  }
-}
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 
 type WakeLockContextState = {
-  wakeLockEnabled: Boolean
+  wakeLockEnabled: boolean
   requestWakeLock: () => void
   releaseWakeLock: () => void
 }
@@ -38,19 +12,10 @@ const WakeLockContext = createContext<WakeLockContextState>({
   releaseWakeLock: () => {},
 })
 
-export const WakeLockProvider: React.FC<{ children?: React.ReactNode }> = ({
-  children,
-}) => {
-  const { wakeLockEnabled, requestWakeLock, releaseWakeLock } =
-    useRequestWakeLock()
+export const WakeLockProvider: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
+  const { wakeLockEnabled, requestWakeLock, releaseWakeLock } = useRequestWakeLock()
 
-  return (
-    <WakeLockContext.Provider
-      value={{ wakeLockEnabled, requestWakeLock, releaseWakeLock }}
-    >
-      {children}
-    </WakeLockContext.Provider>
-  )
+  return <WakeLockContext.Provider value={{ wakeLockEnabled, requestWakeLock, releaseWakeLock }}>{children}</WakeLockContext.Provider>
 }
 
 function useRequestWakeLock() {
@@ -69,9 +34,9 @@ function useRequestWakeLock() {
       wakeLockRef.current = wakeLock
       wakeLockUserRequestedRef.current = true
       setWakeLockEnabled(true)
-      console.log('Requested WakeLock:', wakeLock.released)
+      console.log(`Requested WakeLock (wakelock released: ${wakeLock.released})`)
     } catch (err: any) {
-      // the wake lock request fails - usually system related, such low as battery
+      // the wake lock request fails - usually system related, such as low battery
       console.error(`${err.name}, ${err.message}`)
     }
   }, [])
@@ -83,18 +48,15 @@ function useRequestWakeLock() {
     }
   }, [])
 
-  // request wakelock on initial mount
-  useEffect(() => {
-    requestWakeLock()
-  }, [requestWakeLock])
+  // // request wakelock on initial mount
+  // useEffect(() => {
+  //   requestWakeLock()
+  // }, [requestWakeLock])
 
   // request wakelock on visibility change
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (
-        wakeLockUserRequestedRef.current &&
-        document.visibilityState === 'visible'
-      ) {
+      if (wakeLockUserRequestedRef.current && document.visibilityState === 'visible') {
         requestWakeLock()
       }
     }
@@ -111,7 +73,7 @@ function useRequestWakeLock() {
         wakeLockRef.current = null
         setWakeLock(null)
         setWakeLockEnabled(false)
-        console.log('Screen Wake Lock released:', wakeLock.released)
+        console.log(`WakeLock released (wakelock released: ${wakeLock.released})`)
       }
       wakeLock.addEventListener('release', listener)
       return () => wakeLock.removeEventListener('release', listener)

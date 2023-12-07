@@ -1,13 +1,12 @@
-import React, { useRef, useState } from 'react'
-import { PolySynth, ToneAudioNode } from 'tone'
+import { Button, ButtonGroup, HTMLTable } from '@blueprintjs/core'
+import React from 'react'
 import { Input, Output } from 'webmidi'
-import { Button, ButtonGroup, Divider, HTMLTable, Tab, Tabs } from '@blueprintjs/core'
 import { useWebMidiDevices } from '../components/WebMidi'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
 
 function DeviceTable({ devices }: { devices: (Input | Output)[] }) {
   return (
-    <HTMLTable condensed bordered>
+    <HTMLTable compact bordered>
       <thead>
         <tr>
           <th>Connection</th>
@@ -37,10 +36,6 @@ function DeviceTable({ devices }: { devices: (Input | Output)[] }) {
 export default function MidiDevices() {
   const [showInputs, setShowInputs] = useLocalStorageState('midi-devices:inputs', true)
   const [showOutputs, setShowOutputs] = useLocalStorageState('midi-devices:outputs', true)
-  const synth = useRef<ToneAudioNode | null>(null)
-  if (synth.current === null) {
-    synth.current = new PolySynth().toDestination()
-  }
 
   const { inputs, outputs } = useWebMidiDevices()
   const devices = [...inputs, ...outputs]

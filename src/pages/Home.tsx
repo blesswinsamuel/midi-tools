@@ -1,12 +1,11 @@
-import React from 'react'
 import { Card, Collapse, H5, Switch } from '@blueprintjs/core'
-import MidiRouter from '../main-components/MidiRouter'
-import MidiDevices from '../main-components/MidiDevices'
+import React from 'react'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
+import MidiDevices from '../main-components/MidiDevices'
 import MidiMonitor from '../main-components/MidiMonitor'
+import MidiRouter from '../main-components/MidiRouter'
 import MidiTransmitter from '../main-components/MidiTransmitter/MidiTransmitter'
 import MidiVisualizer from '../main-components/MidiVisualizer/MidiVisualizer'
-import MidiSynth from '../main-components/MidiSynth/MidiSynth'
 
 export default function Home() {
   const [midiRouterOpen, setMidiRouterOpen] = useLocalStorageState('midi-router-open', true)
@@ -45,9 +44,7 @@ export default function Home() {
         <H5>
           <Switch checked={midiSynthOpen} label="MIDI Synth" onChange={() => setMidiSynthOpen((v) => !v)} alignIndicator="right" large />
         </H5>
-        <Collapse isOpen={midiSynthOpen}>
-          <MidiSynth />
-        </Collapse>
+        <Collapse isOpen={midiSynthOpen}>{/* <MidiSynth /> */}</Collapse>
       </Card>
       <Card>
         <H5>

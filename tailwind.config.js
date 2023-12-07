@@ -1,31 +1,17 @@
 const colors = require('tailwindcss/colors')
 
 // Credit: https://www.smashingmagazine.com/2015/11/using-system-ui-fonts-practical-guide/
-const systemFonts = [
-  '-apple-system',
-  'system-ui',
-  'BlinkMacSystemFont',
-  'Segoe UI',
-  'Roboto',
-]
+const systemFonts = ['-apple-system', 'system-ui', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto']
 const fallbackFonts = ['Helvetica Neue', 'sans-serif']
 const sansFallbackFonts = [...systemFonts, ...fallbackFonts]
 const { sansFont, monoFont } = {
   sansFont: ['IBM Plex Sans', ...sansFallbackFonts],
-  monoFont: [
-    'ui-monospace',
-    'SFMono-Regular',
-    'Consolas',
-    'Liberation Mono',
-    'Menlo',
-    'monospace',
-  ],
+  monoFont: ['ui-monospace', 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'Menlo', 'monospace'],
 }
 
 module.exports = {
-  mode: 'jit',
-  purge: ['./src/**/*.{ts,tsx,js,jsx}', './index.html'],
-  darkMode: 'class',
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  darkMode: ['class', '.bp5-dark'],
   theme: {
     fontFamily: {
       sans: sansFont,
