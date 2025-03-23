@@ -8,8 +8,8 @@ const eventTypes: { [key: string]: (e: any) => string } = {
   activesensing: (e: any) => '',
   clock: (e: any) => '',
   controlchange: (e: ControlChangeMessageEvent) => [e.controller.number, e.controller.name, e.value].join(' '),
-  noteon: (e: NoteMessageEvent) => [e.note.name + e.note.octave, e.rawValue].join(' '),
-  noteoff: (e: NoteMessageEvent) => [e.note.name + e.note.octave, e.rawValue].join(' '),
+  noteon: (e: NoteMessageEvent) => [e.note.identifier, e.rawValue].join(' '),
+  noteoff: (e: NoteMessageEvent) => [e.note.identifier, e.rawValue].join(' '),
   sysex: (e: MessageEvent) =>
     Array.from(e.message.rawData.values())
       .map((x) => x.toString(16).padStart(2, '0').toUpperCase())

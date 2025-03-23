@@ -1,4 +1,4 @@
-import { Card, Collapse, H5, Switch } from '@blueprintjs/core'
+import { Section, SectionCard } from '@blueprintjs/core'
 import React from 'react'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
 import MidiDevices from '../main-components/MidiDevices'
@@ -16,52 +16,34 @@ export default function Home() {
   const [midiTransmitterOpen, setMidiTransmitterOpen] = useLocalStorageState('midi-transmitter-open', true)
   return (
     <div style={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}>
-      <Card>
-        <H5>
-          <Switch checked={devicesOpen} label="Connected MIDI Devices" onChange={() => setDevicesOpen((v) => !v)} alignIndicator="right" large />
-        </H5>
-        <Collapse isOpen={devicesOpen}>
+      <Section collapsible title="Connected MIDI Devices" collapseProps={{ isOpen: devicesOpen, onToggle: () => setDevicesOpen((v) => !v) }}>
+        <SectionCard>
           <MidiDevices />
-        </Collapse>
-      </Card>
-      <Card>
-        <H5>
-          <Switch checked={midiRouterOpen} label="MIDI Router" onChange={() => setMidiRouterOpen((v) => !v)} alignIndicator="right" large />
-        </H5>
-        <Collapse isOpen={midiRouterOpen}>
+        </SectionCard>
+      </Section>
+      <Section collapsible title="MIDI Router" collapseProps={{ isOpen: midiRouterOpen, onToggle: () => setMidiRouterOpen((v) => !v) }}>
+        <SectionCard>
           <MidiRouter />
-        </Collapse>
-      </Card>
-      <Card>
-        <H5>
-          <Switch checked={keyboardVisualizerOpen} label="MIDI Visualizer" onChange={() => setKeyboardVisualizerOpen((v) => !v)} alignIndicator="right" large />
-        </H5>
-        <Collapse isOpen={keyboardVisualizerOpen}>
+        </SectionCard>
+      </Section>
+      <Section collapsible title="MIDI Visualizer" collapseProps={{ isOpen: keyboardVisualizerOpen, onToggle: () => setKeyboardVisualizerOpen((v) => !v) }}>
+        <SectionCard>
           <MidiVisualizer />
-        </Collapse>
-      </Card>
-      <Card>
-        <H5>
-          <Switch checked={midiSynthOpen} label="MIDI Synth" onChange={() => setMidiSynthOpen((v) => !v)} alignIndicator="right" large />
-        </H5>
-        <Collapse isOpen={midiSynthOpen}>{/* <MidiSynth /> */}</Collapse>
-      </Card>
-      <Card>
-        <H5>
-          <Switch checked={midiMonitorOpen} label="MIDI Monitor" onChange={() => setMidiMonitorOpen((v) => !v)} alignIndicator="right" large />
-        </H5>
-        <Collapse isOpen={midiMonitorOpen}>
+        </SectionCard>
+      </Section>
+      <Section collapsible title="MIDI Synth" collapseProps={{ isOpen: midiSynthOpen, onToggle: () => setMidiSynthOpen((v) => !v) }}>
+        <SectionCard>{/* <MidiSynth /> */}</SectionCard>
+      </Section>
+      <Section collapsible title="MIDI Monitor" collapseProps={{ isOpen: midiMonitorOpen, onToggle: () => setMidiMonitorOpen((v) => !v) }}>
+        <SectionCard>
           <MidiMonitor />
-        </Collapse>
-      </Card>
-      <Card>
-        <H5>
-          <Switch checked={midiTransmitterOpen} label="MIDI Transmitter" onChange={() => setMidiTransmitterOpen((v) => !v)} alignIndicator="right" large />
-        </H5>
-        <Collapse isOpen={midiTransmitterOpen}>
+        </SectionCard>
+      </Section>
+      <Section collapsible title="MIDI Transmitter" collapseProps={{ isOpen: midiTransmitterOpen, onToggle: () => setMidiTransmitterOpen((v) => !v) }}>
+        <SectionCard>
           <MidiTransmitter />
-        </Collapse>
-      </Card>
+        </SectionCard>
+      </Section>
     </div>
   )
 }
