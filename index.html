@@ -17,6 +17,13 @@
     <meta name="theme-color" content="#445965" />
 
     <title>MIDI</title>
+    <script>
+      (function() {
+        var t = localStorage.getItem('theme');
+        var dark = t === 'dark' || (!t || t === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (dark) document.documentElement.classList.add('dark');
+      })();
+    </script>
 
     <script>
       window.global = window

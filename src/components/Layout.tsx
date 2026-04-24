@@ -1,13 +1,15 @@
-import React from 'react'
+import type React from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { EyeIcon, EyeOffIcon, ExternalLinkIcon } from 'lucide-react'
+import { EyeIcon, EyeOffIcon, ExternalLinkIcon, SunIcon, MoonIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useWakeLock } from './WakeLock'
+import { useTheme } from './hooks/useTheme'
 
 function NavBar({ menuItems }: { menuItems: { title: string; href: string }[] }) {
   const { wakeLockEnabled, requestWakeLock, releaseWakeLock } = useWakeLock()
+  const { resolvedTheme, setTheme } = useTheme()
 
   return (
     <nav className="border-b border-border bg-card">
@@ -36,6 +38,14 @@ function NavBar({ menuItems }: { menuItems: { title: string; href: string }[] })
           <Button
             variant="ghost"
             size="icon"
+            onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+            title={resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {resolvedTheme === 'dark' ? <SunIcon className="size-4" /> : <MoonIcon className="size-4" />}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={wakeLockEnabled ? releaseWakeLock : requestWakeLock}
             title={wakeLockEnabled ? 'Disable wake lock' : 'Enable wake lock'}
           >
@@ -54,7 +64,7 @@ function NavBar({ menuItems }: { menuItems: { title: string; href: string }[] })
 
 const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   return (
-    <div className="dark min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground">
       <NavBar menuItems={[{ href: '/midi-player', title: 'MIDI Player' }]} />
       <div className="mx-auto max-w-[1100px] p-4">{children}</div>
     </div>
