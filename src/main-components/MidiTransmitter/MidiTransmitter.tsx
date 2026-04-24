@@ -3,7 +3,10 @@ import useLocalStorageState from '../../components/hooks/useLocalStorageState'
 import { WebMidi, Output } from 'webmidi'
 import MidiDeviceSelector from '../../components/MidiDeviceSelector'
 import Select from '../../components/Select'
-import { Button, FormGroup, HTMLTable, InputGroup, NumericInput } from '@blueprintjs/core'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table'
 import PsrS910 from './PsrS910'
 
 const options = [
@@ -127,13 +130,14 @@ export default function MidiTransmitter() {
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: '12px' }}>
+      <div className="flex gap-3 flex-wrap items-end">
         <MidiDeviceSelector mode="output" label="Output" value={deviceId} onChange={(v) => setDeviceId(v)} />
-        <FormGroup label="Event" labelFor="event">
-          <Select id="event" options={['', ...options]} value={method} onChange={(event) => setMethod(event.currentTarget.value)} />
-        </FormGroup>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="event">Event</Label>
+          <Select id="event" options={['', ...options]} value={method} onValueChange={(v) => setMethod(v)} />
+        </div>
       </div>
-      {renderMethod(method, device, state, setState)}
+      {renderMethod(method, device as Output, state, setState)}
     </div>
   )
 }
@@ -176,10 +180,10 @@ const renderMethod = (method: string, device: Output, state: any, setState: any)
     }
     switch (fieldType) {
       case 'stringOrNumberOrArray':
-        return <InputGroup id={field} value={getState(field)} onChange={(e: any) => setFieldState(field, e.target.value.split(','))} />
+        return <Input id={field} value={getState(field)} onChange={(e: any) => setFieldState(field, e.target.value.split(','))} />
       case 'numberOrArray':
         return (
-          <InputGroup
+          <Input
             id={field}
             value={getState(field)}
             onChange={(e: any) =>
@@ -192,7 +196,7 @@ const renderMethod = (method: string, device: Output, state: any, setState: any)
         )
       case 'stringOrNumber':
         return (
-          <InputGroup
+          <Input
             id={field}
             value={getState(field)}
             onChange={(e: any) => setFieldState(field, !isNaN(e.target.value) ? +e.target.value : e.target.value)}
@@ -200,18 +204,17 @@ const renderMethod = (method: string, device: Output, state: any, setState: any)
         )
       case 'number':
         return (
-          <NumericInput
+          <Input
             id={field}
+            type="number"
             value={getState(field)}
             onChange={(e) => setFieldState(field, e.target.value)}
-            // min={0}
-            // max={127}
           />
         )
       case 'array':
       case 'boolean':
       case 'string':
-        return <InputGroup id={field} value={getState(field)} onChange={(e: any) => setFieldState(field, e.target.value)} />
+        return <Input id={field} value={getState(field)} onChange={(e: any) => setFieldState(field, e.target.value)} />
       default:
         return (
           <div>
@@ -239,21 +242,21 @@ const renderMethod = (method: string, device: Output, state: any, setState: any)
         }
       })}
     >
-      <HTMLTable bordered interactive>
-        <tbody>
+      <Table>
+        <TableBody>
           {m.fields.map((field) => {
             return (
-              <tr key={field}>
-                <td className="!cursor-default">
+              <TableRow key={field}>
+                <TableCell className="cursor-default w-40">
                   <label htmlFor={field}>{field}</label>
-                </td>
-                <td className="!cursor-default">{getField(field)}</td>
-              </tr>
+                </TableCell>
+                <TableCell className="cursor-default">{getField(field)}</TableCell>
+              </TableRow>
             )
           })}
-        </tbody>
-      </HTMLTable>
-      <Button type="submit">Send</Button>
+        </TableBody>
+      </Table>
+      <Button type="submit" className="mt-2">Send</Button>
     </form>
   )
 }

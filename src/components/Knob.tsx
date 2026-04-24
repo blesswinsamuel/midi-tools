@@ -1,10 +1,9 @@
-import { Intent, Spinner } from '@blueprintjs/core'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 export default function Knob({ max, min, onChange, value, stepSize }: any) {
   const [isPinching, setPinching] = useState(false)
   const prevValue = useRef(value)
-  const divRef = useRef<any>()
+  const divRef = useRef<any>(null)
   const xyRef = useRef({ x: 0, y: 0 })
 
   const getXY = useCallback(
@@ -62,9 +61,26 @@ export default function Knob({ max, min, onChange, value, stepSize }: any) {
     }
   }, [getXY, onChange, isPinching, prevValue, min, max])
 
+  const pct = (value - min) / (max - min)
+  const radius = 16
+  const circumference = 2 * Math.PI * radius
+  const dashOffset = circumference * (1 - pct)
+
   return (
-    <div ref={divRef} style={{ position: 'relative', cursor: 'grab' }} onMouseDown={handleMouseDown}>
-      <Spinner value={(value - min) / (max - min)} intent={isPinching ? Intent.PRIMARY : Intent.NONE} size={40} />
+    <div ref={divRef} style={{ position: 'relative', cursor: 'grab', width: 40, height: 40 }} onMouseDown={handleMouseDown}>
+      <svg width={40} height={40} viewBox="0 0 40 40">
+        <circle cx={20} cy={20} r={radius} fill="none" stroke="currentColor" strokeOpacity={0.2} strokeWidth={3} />
+        <circle
+          cx={20} cy={20} r={radius}
+          fill="none"
+          stroke={isPinching ? 'hsl(var(--primary))' : 'currentColor'}
+          strokeWidth={3}
+          strokeDasharray={circumference}
+          strokeDashoffset={dashOffset}
+          strokeLinecap="round"
+          transform="rotate(-90 20 20)"
+        />
+      </svg>
       <div
         style={{
           position: 'absolute',
@@ -73,6 +89,7 @@ export default function Knob({ max, min, onChange, value, stepSize }: any) {
           top: '50%',
           transform: 'translateY(-50%)',
           textAlign: 'center',
+          fontSize: '9px',
         }}
       >
         {value}

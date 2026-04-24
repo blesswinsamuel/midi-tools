@@ -1,35 +1,37 @@
-import { Button, ButtonGroup, HTMLTable } from '@blueprintjs/core'
 import React from 'react'
 import { Input, Output } from 'webmidi'
 import { useWebMidiDevices } from '../components/WebMidi'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
+import { Button } from '@/components/ui/button'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { cn } from '@/lib/utils'
 
 function DeviceTable({ devices }: { devices: (Input | Output)[] }) {
   return (
-    <HTMLTable compact bordered>
-      <thead>
-        <tr>
-          <th>Connection</th>
-          <th>ID</th>
-          <th>Manufacturer</th>
-          <th>Name</th>
-          <th>State</th>
-          <th>Type</th>
-        </tr>
-      </thead>
-      <tbody>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Connection</TableHead>
+          <TableHead>ID</TableHead>
+          <TableHead>Manufacturer</TableHead>
+          <TableHead>Name</TableHead>
+          <TableHead>State</TableHead>
+          <TableHead>Type</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
         {devices.map((input) => (
-          <tr key={input.id}>
-            <td>{input.connection}</td>
-            <td>{input.id}</td>
-            <td>{input.manufacturer}</td>
-            <td>{input.name}</td>
-            <td>{input.state}</td>
-            <td>{input.type}</td>
-          </tr>
+          <TableRow key={input.id}>
+            <TableCell>{input.connection}</TableCell>
+            <TableCell>{input.id}</TableCell>
+            <TableCell>{input.manufacturer}</TableCell>
+            <TableCell>{input.name}</TableCell>
+            <TableCell>{input.state}</TableCell>
+            <TableCell>{input.type}</TableCell>
+          </TableRow>
         ))}
-      </tbody>
-    </HTMLTable>
+      </TableBody>
+    </Table>
   )
 }
 
@@ -45,16 +47,23 @@ export default function MidiDevices() {
     if (device.type === 'output' && showOutputs) return true
   })
   return (
-    <div>
-      <ButtonGroup>
-        <Button onClick={() => setShowInputs((v) => !v)} active={showInputs}>
+    <div className="flex flex-col gap-3">
+      <div className="flex gap-1">
+        <Button
+          variant={showInputs ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setShowInputs((v: boolean) => !v)}
+        >
           Inputs
         </Button>
-        <Button onClick={() => setShowOutputs((v) => !v)} active={showOutputs}>
+        <Button
+          variant={showOutputs ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => setShowOutputs((v: boolean) => !v)}
+        >
           Outputs
         </Button>
-      </ButtonGroup>
-      <p></p>
+      </div>
       <DeviceTable devices={filteredDevices} />
     </div>
   )

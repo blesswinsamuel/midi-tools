@@ -3,7 +3,7 @@ import { WebMidi, NoteMessageEvent } from 'webmidi'
 import MidiDeviceSelector from '../../components/MidiDeviceSelector'
 import useLocalStorageState from '../../components/hooks/useLocalStorageState'
 import * as Tone from 'tone'
-import { Button, FormGroup } from '@blueprintjs/core'
+import { Button } from '@/components/ui/button'
 
 type Devices = { input?: string; inputController?: string }
 
@@ -82,7 +82,7 @@ export default function MidiSynth() {
   }, [started, devices.input])
 
   return (
-    <div style={{ display: 'flex', gap: '12px' }}>
+    <div className="flex gap-3 flex-wrap items-end">
       <MidiDeviceSelector
         mode="input"
         label="Input"
@@ -99,9 +99,7 @@ export default function MidiSynth() {
           setDeviceIds((d: Devices) => ({ ...d, inputController: v }))
         }}
       />
-      <FormGroup label="‎">
-        <Button onClick={!started ? startTone : stopSynth}>{!started ? 'Start' : 'Stop'}</Button>
-      </FormGroup>
+      <Button variant="outline" onClick={!started ? startTone : stopSynth}>{!started ? 'Start' : 'Stop'}</Button>
     </div>
   )
 }

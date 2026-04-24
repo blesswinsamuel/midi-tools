@@ -1,7 +1,7 @@
 import React, { useRef } from 'react'
 import { useWebMidiDevices } from './WebMidi'
 import Select from './Select'
-import { FormGroup } from '@blueprintjs/core'
+import { Label } from '@/components/ui/label'
 
 type MidiDeviceSelectorProps = {
   label: string
@@ -15,8 +15,8 @@ export default function MidiDeviceSelector({ label, mode, value, onChange }: Mid
   const options = devices[{ input: 'inputs', output: 'outputs' }[mode] as 'inputs' | 'outputs']
   const id = useRef((Math.random() + 1).toString(36).substring(7))
   return (
-    // titleCase(mode + ' device')
-    <FormGroup label={label} labelFor={id.current}>
+    <div className="flex flex-col gap-1.5">
+      <Label htmlFor={id.current}>{label}</Label>
       <Select
         id={id.current}
         value={value}
@@ -25,11 +25,6 @@ export default function MidiDeviceSelector({ label, mode, value, onChange }: Mid
         valueKey={(opt) => opt.id}
         labelKey={(opt) => opt.name}
       />
-    </FormGroup>
+    </div>
   )
 }
-// function titleCase(str: string) {
-//   return str.replace(/(^|\s)\S/g, function (t) {
-//     return t.toUpperCase()
-//   })
-// }

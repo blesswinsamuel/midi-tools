@@ -1,4 +1,3 @@
-import { OverlayToaster, Position } from '@blueprintjs/core'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { Input, Output, PortEvent, WebMidi } from 'webmidi'
 import AppError from './AppError'

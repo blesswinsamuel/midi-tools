@@ -1,6 +1,7 @@
-import { Button, ButtonGroup, FormGroup, H3, H5 } from '@blueprintjs/core'
 import React from 'react'
 import { Output } from 'webmidi'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 
 const YAMAHA_ID = 0x43
 
@@ -618,78 +619,77 @@ export default function PsrS910({ device }: { device: Output }) {
   }
   return (
     <div>
-      <div style={{ display: 'flex', gap: '12px' }}>
-        <FormGroup label="Intro">
-          <ButtonGroup>
-            {Object.keys(INTRO_SWITCH).map((v) => {
-              return (
-                <Button key={v} onClick={() => sendMsg(INTRO_SWITCH[v])}>
-                  {v}
-                </Button>
-              )
-            })}
-          </ButtonGroup>
-        </FormGroup>
+      <div className="flex gap-3 flex-wrap">
+        <div className="flex flex-col gap-1.5">
+          <Label>Intro</Label>
+          <div className="flex">
+            {Object.keys(INTRO_SWITCH).map((v) => (
+              <Button key={v} variant="outline" size="sm" className="rounded-none first:rounded-l-lg last:rounded-r-lg" onClick={() => sendMsg(INTRO_SWITCH[v])}>
+                {v}
+              </Button>
+            ))}
+          </div>
+        </div>
 
-        <FormGroup label="Main">
-          <ButtonGroup>
-            {Object.keys(MAIN_SWITCH).map((v) => {
-              return (
-                <Button key={v} onClick={() => sendMsg(MAIN_SWITCH[v], false)}>
-                  {v}
-                </Button>
-              )
-            })}
-          </ButtonGroup>
-        </FormGroup>
+        <div className="flex flex-col gap-1.5">
+          <Label>Main</Label>
+          <div className="flex">
+            {Object.keys(MAIN_SWITCH).map((v) => (
+              <Button key={v} variant="outline" size="sm" className="rounded-none first:rounded-l-lg last:rounded-r-lg" onClick={() => sendMsg(MAIN_SWITCH[v], false)}>
+                {v}
+              </Button>
+            ))}
+          </div>
+        </div>
 
-        <FormGroup label="Fill In">
-          <ButtonGroup>
-            {Object.keys(FILL_IN_SWITCH).map((v) => {
-              return (
-                <Button key={v} onClick={() => sendMsg(FILL_IN_SWITCH[v])}>
-                  {v}
-                </Button>
-              )
-            })}
-          </ButtonGroup>
-        </FormGroup>
+        <div className="flex flex-col gap-1.5">
+          <Label>Fill In</Label>
+          <div className="flex">
+            {Object.keys(FILL_IN_SWITCH).map((v) => (
+              <Button key={v} variant="outline" size="sm" className="rounded-none first:rounded-l-lg last:rounded-r-lg" onClick={() => sendMsg(FILL_IN_SWITCH[v])}>
+                {v}
+              </Button>
+            ))}
+          </div>
+        </div>
 
-        <FormGroup label="Break">
-          <ButtonGroup>
-            <Button onClick={() => sendMsg(BREAK_SWITCH)}>Break</Button>
-          </ButtonGroup>
-        </FormGroup>
+        <div className="flex flex-col gap-1.5">
+          <Label>Break</Label>
+          <div className="flex">
+            <Button variant="outline" size="sm" onClick={() => sendMsg(BREAK_SWITCH)}>Break</Button>
+          </div>
+        </div>
 
-        <FormGroup label="Ending">
-          <ButtonGroup>
-            {Object.keys(ENDING_SWITCH).map((v) => {
-              return (
-                <Button key={v} onClick={() => sendMsg(ENDING_SWITCH[v])}>
-                  {v}
-                </Button>
-              )
-            })}
-          </ButtonGroup>
-        </FormGroup>
+        <div className="flex flex-col gap-1.5">
+          <Label>Ending</Label>
+          <div className="flex">
+            {Object.keys(ENDING_SWITCH).map((v) => (
+              <Button key={v} variant="outline" size="sm" className="rounded-none first:rounded-l-lg last:rounded-r-lg" onClick={() => sendMsg(ENDING_SWITCH[v])}>
+                {v}
+              </Button>
+            ))}
+          </div>
+        </div>
       </div>
 
-      <H3>Voice</H3>
-      <div style={{ display: 'flex', gap: '12px', flexDirection: 'column' }}>
+      <h3 className="text-lg font-semibold mt-4 mb-2">Voice</h3>
+      <div className="flex flex-col gap-3">
         {VOICE_LIST.map((category) => (
           <div key={category.category}>
-            <H5>{category.category}</H5>
-            <div style={{ display: 'flex', columnGap: '1%', rowGap: '10px', flexWrap: 'wrap' }}>
+            <h5 className="text-sm font-medium mb-1.5">{category.category}</h5>
+            <div className="flex flex-wrap gap-x-[1%] gap-y-2">
               {category.voices.map((voice) => (
                 <Button
                   key={voice.name + voice.type}
+                  variant="outline"
+                  size="sm"
+                  className="w-[19.2%]"
                   onClick={() => {
                     console.log(voice)
                     device.sendControlChange('bankselectcoarse', voice.msb)
                     device.sendControlChange('bankselectfine', voice.lsb)
                     device.sendProgramChange(voice.prg - 1)
                   }}
-                  style={{ width: '19.2%' }}
                 >
                   {voice.name} <i>{voice.type}</i>
                 </Button>

@@ -1,8 +1,11 @@
-import { Button, Checkbox, ControlGroup, FormGroup, NumericInput } from '@blueprintjs/core'
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { ControlChangeMessageEvent, Event, MessageEvent, NoteMessageEvent, WebMidi } from 'webmidi'
 import MidiDeviceSelector from '../components/MidiDeviceSelector'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 const eventTypes: { [key: string]: (e: any) => string } = {
   activesensing: (e: any) => '',
@@ -77,65 +80,65 @@ export default function MidiMonitor() {
     }
   }, [logs])
   return (
-    <div>
-      <FormGroup>
-        <ControlGroup style={{ gap: '12px' }}>
-          <MidiDeviceSelector mode="input" label="Input" value={deviceId} onChange={(v: any) => setDeviceId(v)} />
-
-          <FormGroup label="Tempo" labelFor="tempo">
-            <NumericInput
-              id="tempo"
-              leftIcon="time"
-              // rightElement={<Tag minimal>bpm</Tag>}
-              placeholder="Tempo"
-              value={tempo}
-              min={32}
-              max={240}
-              onChange={(e: { target: { value: any } }) => setTempo(e.target.value)}
-            />
-          </FormGroup>
-          <FormGroup label="‎">
-            <Button onClick={clear}>Clear</Button>
-          </FormGroup>
-        </ControlGroup>
-      </FormGroup>
-      <FormGroup label="Event Types">
-        {Object.keys(eventTypes).map((eventType) => (
-          <Checkbox
-            key={eventType}
-            inline={true}
-            checked={selectedEventTypes.includes(eventType)}
-            onChange={(e) => {
-              if ((e.target as HTMLInputElement).checked) {
-                setEventTypes((t: any) => [...t, eventType])
-              } else {
-                setEventTypes((t: any[]) => t.filter((e: string) => e !== eventType))
-              }
-            }}
-          >
-            {eventType}
-          </Checkbox>
-        ))}
-      </FormGroup>
-      <FormGroup label="Channels">
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].map((channel) => (
-          <Checkbox
-            key={channel}
-            inline={true}
-            checked={selectedChannels.includes(channel)}
-            onChange={(e) => {
-              if ((e.target as HTMLInputElement).checked) {
-                setChannels((ch: any) => [...ch, channel])
-              } else {
-                setChannels((ch: any[]) => ch.filter((e: number) => e !== channel))
-              }
-            }}
-          >
-            {channel}
-          </Checkbox>
-        ))}
-      </FormGroup>
-      <pre ref={logRef} className="bg-black bg-opacity-20 overflow-y-scroll h-[500px]">
+    <div className="flex flex-col gap-3">
+      <div className="flex gap-3 flex-wrap items-end">
+        <MidiDeviceSelector mode="input" label="Input" value={deviceId} onChange={(v: any) => setDeviceId(v)} />
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="tempo">Tempo</Label>
+          <Input
+            id="tempo"
+            type="number"
+            placeholder="Tempo"
+            value={tempo}
+            min={32}
+            max={240}
+            onChange={(e) => setTempo(+e.target.value)}
+            className="w-24"
+          />
+        </div>
+        <Button variant="outline" size="sm" onClick={clear}>Clear</Button>
+      </div>
+      <div className="flex flex-col gap-1">
+        <Label>Event Types</Label>
+        <div className="flex flex-wrap gap-x-4 gap-y-1">
+          {Object.keys(eventTypes).map((eventType) => (
+            <label key={eventType} className="flex items-center gap-1.5 text-sm cursor-pointer">
+              <Checkbox
+                checked={selectedEventTypes.includes(eventType)}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setEventTypes((t: any) => [...t, eventType])
+                  } else {
+                    setEventTypes((t: any[]) => t.filter((e: string) => e !== eventType))
+                  }
+                }}
+              />
+              {eventType}
+            </label>
+          ))}
+        </div>
+      </div>
+      <div className="flex flex-col gap-1">
+        <Label>Channels</Label>
+        <div className="flex flex-wrap gap-x-4 gap-y-1">
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].map((channel) => (
+            <label key={channel} className="flex items-center gap-1.5 text-sm cursor-pointer">
+              <Checkbox
+                checked={selectedChannels.includes(channel)}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setChannels((ch: any) => [...ch, channel])
+                  } else {
+                    setChannels((ch: any[]) => ch.filter((e: number) => e !== channel))
+                  }
+                }}
+              />
+              {channel}
+            </label>
+          ))}
+        </div>
+      </div>
+      <pre ref={logRef} className="bg-black/20 overflow-y-scroll h-[500px]">
         <code className="py-4 block">{logs}</code>
       </pre>
     </div>

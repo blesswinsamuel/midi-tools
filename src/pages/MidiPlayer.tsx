@@ -5,7 +5,9 @@ import { WebMidi, Input, Output, ControlChangeMessageEvent, Utilities } from 'we
 import MidiDeviceSelector from '../components/MidiDeviceSelector'
 import useAnimationState from '../components/hooks/useAnimationState'
 import Knob from '../components/Knob'
-import { Button, ButtonGroup, Card, ControlGroup, Divider, InputGroup, Intent, NumericInput, Slider, Tag } from '@blueprintjs/core'
+import { Button } from '@/components/ui/button'
+import { Input as InputField } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
 
 function TempoTapper(setTempo: (v: number) => void, start: () => void) {
   let taps: number[] = []
@@ -133,28 +135,26 @@ function Transport({
   return (
     <>
       <br />
-      <Tag className="text-3xl p-1">
-        <strong>
-          {[
-            transportState.bar.toString().padStart(3, '\xa0'),
-            transportState.beat.toString().padStart(1, '0'),
-            transportState.clock.toString().padStart(2, '0'),
-          ].join(' : ')}
-        </strong>
-      </Tag>
+      <span className="font-mono text-3xl font-bold tracking-widest">
+        {[
+          transportState.bar.toString().padStart(3, '\xa0'),
+          transportState.beat.toString().padStart(1, '0'),
+          transportState.clock.toString().padStart(2, '0'),
+        ].join(' : ')}
+      </span>
       <br />
       <br />
-      <ButtonGroup>
-        <Button icon="play" onClick={play} intent={transportState.playing ? Intent.SUCCESS : undefined} active={transportState.playing}>
-          Play
+      <div className="flex gap-1">
+        <Button variant={transportState.playing ? 'default' : 'outline'} onClick={play}>
+          ▶ Play
         </Button>
-        <Button icon="stop" onClick={stop}>
-          Stop
+        <Button variant="outline" onClick={stop}>
+          ■ Stop
         </Button>
-        <Button icon="warning-sign" onClick={reset}>
-          Reset
+        <Button variant="outline" onClick={reset}>
+          ↺ Reset
         </Button>
-      </ButtonGroup>
+      </div>
     </>
   )
 }
@@ -234,10 +234,10 @@ export default function MidiPlayer() {
     }
   }, [tapTempo, inputController])
 
-  usePlayer(timerRef.current, output, tempo, ppq)
+  usePlayer(timerRef.current, output || false, tempo, ppq)
   return (
-    <div>
-      <ControlGroup>
+    <div className="flex flex-col gap-3">
+      <div className="flex gap-3 flex-wrap">
         <MidiDeviceSelector
           mode="input"
           label="Input"
@@ -270,32 +270,36 @@ export default function MidiPlayer() {
             setDeviceIds((d) => ({ ...d, output: v }))
           }}
         />
-      </ControlGroup>
-      <Divider />
-      <ControlGroup>
-        <NumericInput
-          leftIcon="time"
-          rightElement={<Tag minimal>bpm</Tag>}
-          placeholder="Tempo"
-          value={tempo}
-          min={32}
-          max={240}
-          onValueChange={(v) => setTempo(v)}
-        />
-        <Button onClick={tapTempo}>Tap</Button>
-        <NumericInput
-          leftIcon="pulse"
-          rightElement={<Tag minimal>ppq</Tag>}
-          placeholder="Pulse per quarter"
-          value={ppq}
-          min={1}
-          max={1920}
-          onValueChange={(v) => setPpq(v)}
-        />
-        <InputGroup
+      </div>
+      <hr className="border-border" />
+      <div className="flex gap-2 flex-wrap items-center">
+        <div className="flex items-center gap-1">
+          <InputField
+            type="number"
+            placeholder="Tempo"
+            value={tempo}
+            min={32}
+            max={240}
+            onChange={(e) => setTempo(+e.target.value)}
+            className="w-20"
+          />
+          <Badge variant="outline">bpm</Badge>
+        </div>
+        <Button variant="outline" size="sm" onClick={tapTempo}>Tap</Button>
+        <div className="flex items-center gap-1">
+          <InputField
+            type="number"
+            placeholder="Pulse per quarter"
+            value={ppq}
+            min={1}
+            max={1920}
+            onChange={(e) => setPpq(+e.target.value)}
+            className="w-20"
+          />
+          <Badge variant="outline">ppq</Badge>
+        </div>
+        <InputField
           value={timeSignature.join('/')}
-          min={1}
-          max={12}
           onChange={(e) =>
             setTimeSignature(
               e.target.value
@@ -304,10 +308,11 @@ export default function MidiPlayer() {
                 .map((i) => (i === '' || isNaN(i as unknown as number) ? 0 : parseInt(i))) as [number, number]
             )
           }
+          className="w-16"
         />
-      </ControlGroup>
-      <Transport outputController={outputController} inputController={inputController} timer={timerRef.current} />
-      <Divider />
+      </div>
+      <Transport outputController={outputController || false} inputController={inputController || false} timer={timerRef.current!} />
+      <hr className="border-border" />
     </div>
   )
 }
