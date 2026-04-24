@@ -5,9 +5,11 @@ import { WakeLockProvider } from './components/WakeLock'
 import { WebMidiProvider } from './components/WebMidi'
 import Home from './pages/Home'
 import { ToasterProvider } from './components/Toaster'
+import { TooltipProvider } from './components/ui/tooltip'
 
 const App: React.FC = () => {
   return (
+    <TooltipProvider>
     <ToasterProvider>
       <BrowserRouter>
         <WebMidiProvider>
@@ -19,6 +21,7 @@ const App: React.FC = () => {
         </WebMidiProvider>
       </BrowserRouter>
     </ToasterProvider>
+    </TooltipProvider>
   )
 }
 
