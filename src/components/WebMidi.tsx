@@ -3,6 +3,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { Input, Output, PortEvent, WebMidi } from 'webmidi'
 import AppError from './AppError'
 import AppSpinner from './AppSpinner'
+import { useToaster } from './Toaster'
 
 type WebMidiContextState = {
   inputs: Input[]
@@ -31,6 +32,7 @@ export const WebMidiProvider: React.FC<{ children?: React.ReactNode }> = ({ chil
 export function useRequestWebMidi(options?: { sysex?: boolean }): [boolean, Error | null] {
   const [webMidiEnabled, setWebMidiEnabled] = useState(false)
   const [webMidiError, setWebMidiError] = useState<Error | null>(null)
+  const { toaster } = useToaster()
 
   useEffect(() => {
     if (WebMidi.enabled) {
@@ -41,7 +43,7 @@ export function useRequestWebMidi(options?: { sysex?: boolean }): [boolean, Erro
       try {
         await WebMidi.enable(options)
         console.log('WebMidi enabled')
-        AppToaster.show({ message: `WebMidi enabled` })
+        toaster.show({ message: `WebMidi enabled` })
         setWebMidiEnabled(true)
       } catch (err) {
         setWebMidiError(err as Error)
@@ -52,18 +54,14 @@ export function useRequestWebMidi(options?: { sysex?: boolean }): [boolean, Erro
   return [webMidiEnabled, webMidiError]
 }
 
-export const AppToaster = OverlayToaster.create({
-  position: Position.TOP_RIGHT,
-  className: '!fixed',
-})
-
 function useWebMidiDeviceConnectionListeners() {
   const [inputs, setInputs] = useState<Input[]>([])
   const [outputs, setOutputs] = useState<Output[]>([])
+  const { toaster } = useToaster()
 
   useEffect(() => {
     const listener = (e: PortEvent) => {
-      AppToaster.show({ message: `${e.port.type} ${e.type} - ${e.port.name}` })
+      toaster.show({ message: `${e.port.type} ${e.type} - ${e.port.name}` })
       console.log(`${e.port.type} ${e.type} - ${e.port.name}`, e)
       setInputs([...WebMidi.inputs])
       setOutputs([...WebMidi.outputs])

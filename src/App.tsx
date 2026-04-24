@@ -4,31 +4,21 @@ import Layout from './components/Layout'
 import { WakeLockProvider } from './components/WakeLock'
 import { WebMidiProvider } from './components/WebMidi'
 import Home from './pages/Home'
-
-const Analytics = () => {
-  const { pathname, search } = useLocation()
-
-  useEffect(() => {
-    const goatcounter = (window as any).goatcounter
-    if (!goatcounter.count) return
-    goatcounter.count({ path: pathname + search })
-  }, [pathname, search])
-
-  return <></>
-}
+import { ToasterProvider } from './components/Toaster'
 
 const App: React.FC = () => {
   return (
-    <BrowserRouter>
-      <WebMidiProvider>
-        <WakeLockProvider>
-          <Layout>
-            <Analytics />
-            <AppRoutes />
-          </Layout>
-        </WakeLockProvider>
-      </WebMidiProvider>
-    </BrowserRouter>
+    <ToasterProvider>
+      <BrowserRouter>
+        <WebMidiProvider>
+          <WakeLockProvider>
+            <Layout>
+              <AppRoutes />
+            </Layout>
+          </WakeLockProvider>
+        </WebMidiProvider>
+      </BrowserRouter>
+    </ToasterProvider>
   )
 }
 

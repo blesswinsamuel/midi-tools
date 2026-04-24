@@ -1,4 +1,6 @@
-const colors = require('tailwindcss/colors')
+import { Config } from 'tailwindcss'
+import tailwindForms from '@tailwindcss/forms'
+import tailwindColors from 'tailwindcss/colors'
 
 // Credit: https://www.smashingmagazine.com/2015/11/using-system-ui-fonts-practical-guide/
 const systemFonts = ['-apple-system', 'system-ui', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto']
@@ -9,7 +11,7 @@ const { sansFont, monoFont } = {
   monoFont: ['ui-monospace', 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'Menlo', 'monospace'],
 }
 
-module.exports = {
+export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   darkMode: ['class', '.bp5-dark'],
   theme: {
@@ -19,7 +21,7 @@ module.exports = {
     },
     extend: {
       colors: {
-        gray: colors.neutral,
+        gray: tailwindColors.neutral,
         primary: '#B1E55A',
       },
       boxShadow: {
@@ -32,8 +34,8 @@ module.exports = {
     },
   },
   plugins: [
-    require('@tailwindcss/forms')({
+    tailwindForms({
       strategy: 'class',
     }),
   ],
-}
+} satisfies Config
