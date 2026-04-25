@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { WebMidi, NoteMessageEvent } from 'webmidi'
 import MidiDeviceSelector from '../../components/MidiDeviceSelector'
 import useLocalStorageState from '../../components/hooks/useLocalStorageState'
@@ -45,16 +45,16 @@ export default function MidiSynth() {
     }).toDestination()
   }
 
-  const stopSynth = () => {
+  const stopSynth = useCallback(() => {
     console.log('Synth disposed')
     synth.current?.dispose()
     synth.current = null
     setStarted(false)
-  }
+  }, [])
 
   useEffect(() => {
     return stopSynth
-  }, [])
+  }, [stopSynth])
 
   useEffect(() => {
     if (!devices.input) return
@@ -99,7 +99,9 @@ export default function MidiSynth() {
           setDeviceIds((d: Devices) => ({ ...d, inputController: v }))
         }}
       />
-      <Button variant="outline" onClick={!started ? startTone : stopSynth}>{!started ? 'Start' : 'Stop'}</Button>
+      <Button variant="outline" onClick={!started ? startTone : stopSynth}>
+        {!started ? 'Start' : 'Stop'}
+      </Button>
     </div>
   )
 }

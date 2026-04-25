@@ -9,27 +9,18 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Card, CardContent } from '@/components/ui/card'
 import { ChevronDownIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import MidiSynth from '@/main-components/MidiSynth/MidiSynth'
 
-function Section({
-  title,
-  open,
-  onToggle,
-  children,
-}: {
-  title: string
-  open: boolean
-  onToggle: () => void
-  children: React.ReactNode
-}) {
+function Section({ title, open, onToggle, children }: { title: string; open: boolean; onToggle: () => void; children: React.ReactNode }) {
   return (
     <Collapsible open={open} onOpenChange={onToggle}>
       <Card className="gap-0 py-0">
-        <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium hover:bg-muted/50 transition-colors rounded-xl">
+        <CollapsibleTrigger className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium hover:bg-muted/50 transition-colors rounded-none">
           {title}
           <ChevronDownIcon className={cn('size-4 text-muted-foreground transition-transform', open && 'rotate-180')} />
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <div className="px-4 pb-4">{children}</div>
+          <div className="px-4 pt-2 pb-4">{children}</div>
         </CollapsibleContent>
       </Card>
     </Collapsible>
@@ -55,7 +46,7 @@ export default function Home() {
         <MidiVisualizer />
       </Section>
       <Section title="MIDI Synth" open={midiSynthOpen} onToggle={() => setMidiSynthOpen((v: boolean) => !v)}>
-        <>{/* <MidiSynth /> */}</>
+        <MidiSynth />
       </Section>
       <Section title="MIDI Monitor" open={midiMonitorOpen} onToggle={() => setMidiMonitorOpen((v: boolean) => !v)}>
         <MidiMonitor />
