@@ -31,14 +31,18 @@ function NavBar({ menuItems }: { menuItems: { title: string; href: string }[] })
           <Link to="/" className="font-semibold text-sm hover:opacity-80 transition-opacity">
             MIDI Tools
           </Link>
-          <Separator orientation="vertical" className="mx-1 h-4 self-center" />
-          <NavigationMenu>
-            <NavigationMenuList>
-              {menuItems.map(({ href, title }) => (
-                <NavItem key={href} href={href} title={title} />
-              ))}
-            </NavigationMenuList>
-          </NavigationMenu>
+          {menuItems.length > 0 && (
+            <>
+              <Separator orientation="vertical" className="mx-1 h-4 self-center" />
+              <NavigationMenu>
+                <NavigationMenuList>
+                  {menuItems.map(({ href, title }) => (
+                    <NavItem key={href} href={href} title={title} />
+                  ))}
+                </NavigationMenuList>
+              </NavigationMenu>
+            </>
+          )}
         </div>
         <div className="flex items-center gap-1">
           <Tooltip>
@@ -93,7 +97,7 @@ function NavBar({ menuItems }: { menuItems: { title: string; href: string }[] })
 const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <NavBar menuItems={[{ href: '/midi-player', title: 'MIDI Player' }]} />
+      <NavBar menuItems={[]} />
       <div className="mx-auto max-w-[1100px] p-4">{children}</div>
     </div>
   )
