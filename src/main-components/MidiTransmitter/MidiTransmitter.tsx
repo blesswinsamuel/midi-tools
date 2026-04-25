@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import useLocalStorageState from '../../components/hooks/useLocalStorageState'
-import { WebMidi, Output } from 'webmidi'
+import { WebMidi, type Output } from 'webmidi'
 import MidiDeviceSelector from '../../components/MidiDeviceSelector'
 import Select from '../../components/Select'
 import { Button } from '@/components/ui/button'
@@ -43,6 +43,7 @@ const options = [
 const methods: {
   [key: string]: {
     fields: (keyof typeof fieldTypes)[]
+    // biome-ignore lint/suspicious/noExplicitAny: doIt receives dynamically structured MIDI state
     doIt: (device: Output, state: any) => void
   }
 } = {
@@ -116,7 +117,7 @@ const fieldTypes = {
   program: 'string', // check if this is right
 }
 
-export const handleFormSubmit = (func: any) => (event: any) => {
+export const handleFormSubmit = (func: () => void) => (event: { preventDefault(): void }) => {
   event.preventDefault()
   return func()
 }
@@ -124,7 +125,7 @@ export const handleFormSubmit = (func: any) => (event: any) => {
 export default function MidiTransmitter() {
   const [deviceId, setDeviceId] = useLocalStorageState('midi:transmitter:device', '')
   const [method, setMethod] = useLocalStorageState('midi:transmitter:method', '')
-  const [state, setState] = useState({})
+  const [state, setState] = useState<Record<string, unknown>>({})
 
   const device = WebMidi.getOutputById(deviceId)
 
@@ -137,12 +138,12 @@ export default function MidiTransmitter() {
           <Select id="event" options={['', ...options]} value={method} onValueChange={(v) => setMethod(v)} />
         </div>
       </div>
-      {renderMethod(method, device as Output, state, setState)}
+      {renderMethod(method, device as Output, state, (s) => setState(s))}
     </div>
   )
 }
 
-const renderMethod = (method: string, device: Output, state: any, setState: any) => {
+const renderMethod = (method: string, device: Output, state: Record<string, unknown>, setState: (s: Record<string, unknown>) => void) => {
   if (method === 'PSR S910 Controller') {
     return <PsrS910 device={device} />
   }
@@ -154,11 +155,14 @@ const renderMethod = (method: string, device: Output, state: any, setState: any)
     return <div>Not implemented</div>
   }
 
-  const getState = (field: keyof typeof fieldTypes) => field.split('.').reduce((prev, curr) => prev && prev[curr], state) || ''
-  const setFieldState = (field: keyof typeof fieldTypes, newFieldValue: any) => {
+  const getState = (field: keyof typeof fieldTypes): string => {
+    const val = field.split('.').reduce<unknown>((prev, curr) => (prev as Record<string, unknown>)?.[curr], state)
+    return String(val ?? '')
+  }
+  const setFieldState = (field: keyof typeof fieldTypes, newFieldValue: unknown) => {
     const fieldParts = field.split('.')
     const newState = { ...state }
-    let last = newState
+    let last: Record<string, unknown> = newState
     for (let i = 0; i < fieldParts.length; i++) {
       const fieldPart = fieldParts[i]
       if (i === fieldParts.length - 1) {
@@ -167,7 +171,7 @@ const renderMethod = (method: string, device: Output, state: any, setState: any)
         if (!last[fieldPart]) {
           last[fieldPart] = {}
         }
-        last = last[fieldPart]
+        last = last[fieldPart] as Record<string, unknown>
       }
     }
     setState(newState)
@@ -180,16 +184,16 @@ const renderMethod = (method: string, device: Output, state: any, setState: any)
     }
     switch (fieldType) {
       case 'stringOrNumberOrArray':
-        return <Input id={field} value={getState(field)} onChange={(e: any) => setFieldState(field, e.target.value.split(','))} />
+        return <Input id={field} value={getState(field)} onChange={(e) => setFieldState(field, e.target.value.split(','))} />
       case 'numberOrArray':
         return (
           <Input
             id={field}
             value={getState(field)}
-            onChange={(e: any) =>
+            onChange={(e) =>
               setFieldState(
                 field,
-                e.target.value.split(',').map((v: any) => (!isNaN(v) ? +v : v))
+                e.target.value.split(',').map((v: string) => (!Number.isNaN(Number(v)) ? +v : v))
               )
             }
           />
@@ -199,7 +203,7 @@ const renderMethod = (method: string, device: Output, state: any, setState: any)
           <Input
             id={field}
             value={getState(field)}
-            onChange={(e: any) => setFieldState(field, !isNaN(e.target.value) ? +e.target.value : e.target.value)}
+            onChange={(e) => setFieldState(field, !Number.isNaN(Number(e.target.value)) ? +e.target.value : e.target.value)}
           />
         )
       case 'number':
@@ -214,7 +218,7 @@ const renderMethod = (method: string, device: Output, state: any, setState: any)
       case 'array':
       case 'boolean':
       case 'string':
-        return <Input id={field} value={getState(field)} onChange={(e: any) => setFieldState(field, e.target.value)} />
+        return <Input id={field} value={getState(field)} onChange={(e) => setFieldState(field, e.target.value)} />
       default:
         return (
           <div>

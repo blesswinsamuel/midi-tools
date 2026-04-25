@@ -1,10 +1,9 @@
-import React, { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import Timer from '../components/timer'
 import useLocalStorageState from '../components/hooks/useLocalStorageState'
-import { WebMidi, Input, Output, ControlChangeMessageEvent, Utilities } from 'webmidi'
+import { WebMidi, Utilities, type Input, type Output, type ControlChangeMessageEvent } from 'webmidi'
 import MidiDeviceSelector from '../components/MidiDeviceSelector'
 import useAnimationState from '../components/hooks/useAnimationState'
-import Knob from '../components/Knob'
 import { Button } from '@/components/ui/button'
 import { Input as InputField } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -13,7 +12,7 @@ function TempoTapper(setTempo: (v: number) => void, start: () => void) {
   let taps: number[] = []
   let lastTimer: number | undefined = undefined
   let autoTapTimer: number | undefined = undefined
-  let maxBufferLength = 16
+  const maxBufferLength = 16
   let timeSignature: [number, number]
 
   function calculateTempo() {
@@ -55,7 +54,7 @@ function TempoTapper(setTempo: (v: number) => void, start: () => void) {
     lastTimer = setTimeout(resetTaps, 2000)
   }
 
-  function setOptions(options: any) {
+  function setOptions(options: { timeSignature: [number, number] }) {
     timeSignature = options.timeSignature
   }
 
@@ -164,7 +163,7 @@ function Transport({
 
 function usePlayer(timer: ReturnType<typeof Timer>, output: false | Output, tempo: number, ppq: number) {
   useEffect(() => {
-    return timer.subscribe((time, { bar, beat, clock, playing }) => {
+    return timer.subscribe((time, { beat, clock, playing }) => {
       if (!playing) return
       // if (beat !== 1 || clock !== 0) return
       if (clock !== 0) return
@@ -174,21 +173,20 @@ function usePlayer(timer: ReturnType<typeof Timer>, output: false | Output, temp
         channelNo = '10',
         velocity = 80,
         length = 20
-      output &&
+      if (output)
         output.playNote(Utilities.toNoteNumber(noteName) + delta, {
           channels: parseInt(channelNo),
           rawAttack: velocity,
           duration: (((length / ppq) * 60) / tempo) * 1000,
           time: time,
         })
-      if (beat % 2 === 0)
-        output &&
-          output.playNote(Utilities.toNoteNumber('D2') + delta, {
-            channels: parseInt(channelNo),
-            rawAttack: velocity,
-            duration: (((length / ppq) * 60) / tempo) * 1000,
-            time: time,
-          })
+      if (beat % 2 === 0 && output)
+        output.playNote(Utilities.toNoteNumber('D2') + delta, {
+          channels: parseInt(channelNo),
+          rawAttack: velocity,
+          duration: (((length / ppq) * 60) / tempo) * 1000,
+          time: time,
+        })
     })
   }, [timer, output, tempo, ppq])
 }
@@ -216,13 +214,13 @@ export default function MidiPlayer() {
   }
   const tempoTapper = useRef<ReturnType<typeof TempoTapper> | null>(null)
   if (tempoTapper.current === null) {
-    tempoTapper.current = TempoTapper(setTempo, () => timerRef.current!.start())
+    tempoTapper.current = TempoTapper(setTempo, () => timerRef.current?.start())
   }
-  const tapTempo = useCallback(() => tempoTapper.current!.tap(), [])
+  const tapTempo = useCallback(() => tempoTapper.current?.tap(), [])
 
   useEffect(() => {
-    timerRef.current!.setOptions({ ppq, bpm: tempo, timeSignature })
-    tempoTapper.current!.setOptions({ timeSignature })
+    timerRef.current?.setOptions({ ppq, bpm: tempo, timeSignature })
+    tempoTapper.current?.setOptions({ timeSignature })
   }, [ppq, tempo, timeSignature])
 
   useEffect(() => {
@@ -294,13 +292,13 @@ export default function MidiPlayer() {
               e.target.value
                 .split('/')
                 .slice(0, 2)
-                .map((i) => (i === '' || isNaN(i as unknown as number) ? 0 : parseInt(i))) as [number, number]
+                .map((i) => (i === '' || Number.isNaN(Number(i)) ? 0 : parseInt(i))) as [number, number]
             )
           }
           className="w-16"
         />
       </div>
-      <Transport outputController={outputController || false} inputController={inputController || false} timer={timerRef.current!} />
+      <Transport outputController={outputController || false} inputController={inputController || false} timer={timerRef.current as ReturnType<typeof Timer>} />
       <hr className="border-border" />
     </div>
   )

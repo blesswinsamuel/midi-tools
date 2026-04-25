@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 import { useWebMidiDevices } from './WebMidi'
 import Select from './Select'
 import { Label } from '@/components/ui/label'

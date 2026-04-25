@@ -1,4 +1,3 @@
-import React from 'react'
 import useLocalStorageState from '../../components/hooks/useLocalStorageState'
 import MidiDeviceSelector from '../../components/MidiDeviceSelector'
 import Select from '../../components/Select'

@@ -1,11 +1,10 @@
-import React from 'react'
 import Select from './Select'
 
 type MidiChannelSelectorProps = {
   label: string
   mode?: 'input' | 'output'
-  value: any
-  onChange: any
+  value: string | undefined
+  onChange: (v: string | undefined) => void
 }
 
 export default function MidiChannelSelector({ value, onChange }: MidiChannelSelectorProps) {
@@ -13,10 +12,10 @@ export default function MidiChannelSelector({ value, onChange }: MidiChannelSele
   return (
     <Select
       value={value}
-      onChange={(event) => onChange(event.currentTarget.value == 'all' ? undefined : event.currentTarget.value)}
+      onValueChange={(v) => onChange(v === 'all' ? undefined : v)}
       options={[{ id: '', name: `Ch` }, ...options.map((o) => ({ id: o, name: o }))]}
       valueKey={(opt) => opt.id}
-      labelKey={(opt) => opt.name}
+      labelKey={(opt) => String(opt.name)}
     />
   )
 }
