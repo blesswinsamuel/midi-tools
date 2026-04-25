@@ -54,16 +54,16 @@ function PianoKey({ hotkey, note, pressed }: IPianoKeyProps) {
 function SustainPedal({ pressed }: { pressed: boolean }) {
   return (
     <div className="flex justify-center">
-      <div className={classNames(pressed ? 'bg-gray-700' : 'bg-gray-900', 'w-10', 'h-10')}></div>
+      <div className={classNames(pressed ? 'bg-primary' : 'bg-muted', 'w-10', 'h-10')}></div>
     </div>
   )
 }
 
 function PitchBend({ value }: { value: number }) {
   return (
-    <div className="bg-gray-900 w-4 h-14 relative">
+    <div className="bg-muted w-4 h-14 relative">
       <div
-        className={classNames('bg-gray-700 w-full', 'absolute')}
+        className={classNames('bg-primary w-full', 'absolute')}
         style={{ top: (1 - Math.max(value, 0)) * 50 + '%', bottom: (1 + Math.min(value, 0)) * 50 + '%' }}
       ></div>
     </div>
@@ -72,8 +72,8 @@ function PitchBend({ value }: { value: number }) {
 
 function ModWheel({ value }: { value: number }) {
   return (
-    <div className="bg-gray-900 w-4 h-14 relative">
-      <div className={classNames('bg-gray-700 w-full', 'absolute', 'bottom-0')} style={{ height: value * 100 + '%' }}></div>
+    <div className="bg-muted w-4 h-14 relative">
+      <div className={classNames('bg-primary w-full', 'absolute', 'bottom-0')} style={{ height: value * 100 + '%' }}></div>
     </div>
   )
 }
