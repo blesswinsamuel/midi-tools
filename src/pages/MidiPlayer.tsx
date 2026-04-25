@@ -39,10 +39,13 @@ function TempoTapper(setTempo: (v: number) => void, start: () => void) {
     const [barLength] = timeSignature
     if (taps.length === barLength) {
       const t = calculateTempo()
-      autoTapTimer = setTimeout(() => {
-        setTempo(t)
-        start()
-      }, (60.0 / t) * 1000)
+      autoTapTimer = setTimeout(
+        () => {
+          setTempo(t)
+          start()
+        },
+        (60.0 / t) * 1000
+      )
     }
     if (taps.length > barLength) {
       setTempo(calculateTempo())
@@ -215,7 +218,7 @@ export default function MidiPlayer() {
   if (tempoTapper.current === null) {
     tempoTapper.current = TempoTapper(setTempo, () => timerRef.current!.start())
   }
-  const tapTempo = useCallback(() => tempoTapper.current!.tap(), [tempoTapper])
+  const tapTempo = useCallback(() => tempoTapper.current!.tap(), [])
 
   useEffect(() => {
     timerRef.current!.setOptions({ ppq, bpm: tempo, timeSignature })
@@ -274,28 +277,14 @@ export default function MidiPlayer() {
       <hr className="border-border" />
       <div className="flex gap-2 flex-wrap items-center">
         <div className="flex items-center gap-1">
-          <InputField
-            type="number"
-            placeholder="Tempo"
-            value={tempo}
-            min={32}
-            max={240}
-            onChange={(e) => setTempo(+e.target.value)}
-            className="w-20"
-          />
+          <InputField type="number" placeholder="Tempo" value={tempo} min={32} max={240} onChange={(e) => setTempo(+e.target.value)} className="w-20" />
           <Badge variant="outline">bpm</Badge>
         </div>
-        <Button variant="outline" size="sm" onClick={tapTempo}>Tap</Button>
+        <Button variant="outline" size="sm" onClick={tapTempo}>
+          Tap
+        </Button>
         <div className="flex items-center gap-1">
-          <InputField
-            type="number"
-            placeholder="Pulse per quarter"
-            value={ppq}
-            min={1}
-            max={1920}
-            onChange={(e) => setPpq(+e.target.value)}
-            className="w-20"
-          />
+          <InputField type="number" placeholder="Pulse per quarter" value={ppq} min={1} max={1920} onChange={(e) => setPpq(+e.target.value)} className="w-20" />
           <Badge variant="outline">ppq</Badge>
         </div>
         <InputField

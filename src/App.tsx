@@ -10,17 +10,17 @@ import { TooltipProvider } from './components/ui/tooltip'
 const App: React.FC = () => {
   return (
     <TooltipProvider>
-    <ToasterProvider>
-      <BrowserRouter>
-        <WebMidiProvider>
-          <WakeLockProvider>
-            <Layout>
-              <AppRoutes />
-            </Layout>
-          </WakeLockProvider>
-        </WebMidiProvider>
-      </BrowserRouter>
-    </ToasterProvider>
+      <ToasterProvider>
+        <BrowserRouter>
+          <WebMidiProvider>
+            <WakeLockProvider>
+              <Layout>
+                <AppRoutes />
+              </Layout>
+            </WakeLockProvider>
+          </WebMidiProvider>
+        </BrowserRouter>
+      </ToasterProvider>
     </TooltipProvider>
   )
 }

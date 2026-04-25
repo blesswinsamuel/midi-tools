@@ -23,15 +23,28 @@ export default function Select<T>({
   className,
   disabled,
 }: SelectProps<T>) {
+  // Map options to { label, value } items. Empty string values become null,
+  // which base-ui uses for the "no selection" state — its label is shown in the
+  // trigger when nothing is selected (acts as a built-in placeholder).
+  const items = options.map(opt => {
+    const v = String(valueKey(opt))
+    return { label: labelKey(opt), value: v === '' ? null : v }
+  })
+
   return (
-    <ShadcnSelect value={value} onValueChange={(v) => onValueChange?.(v ?? '')} disabled={disabled}>
+    <ShadcnSelect
+      items={items}
+      value={value || null}
+      onValueChange={(v) => onValueChange?.(v ?? '')}
+      disabled={disabled}
+    >
       <SelectTrigger id={id} className={className}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
-      <SelectContent>
-        {options.map(option => (
-          <SelectItem key={String(valueKey(option))} value={String(valueKey(option))}>
-            {labelKey(option)}
+      <SelectContent alignItemWithTrigger={false}>
+        {items.map(item => (
+          <SelectItem key={item.value ?? '__empty__'} value={item.value}>
+            {item.label}
           </SelectItem>
         ))}
       </SelectContent>

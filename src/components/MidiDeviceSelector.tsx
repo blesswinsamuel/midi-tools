@@ -20,7 +20,7 @@ export default function MidiDeviceSelector({ label, mode, value, onChange }: Mid
       <Select
         id={id.current}
         value={value}
-        onChange={(event) => onChange(event.currentTarget.value)}
+        onValueChange={(v) => onChange(v)}
         options={[{ id: '', name: `Select ${label}...` }, ...options]}
         valueKey={(opt) => opt.id}
         labelKey={(opt) => opt.name}
