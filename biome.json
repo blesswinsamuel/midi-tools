@@ -15,7 +15,7 @@
 		"expand": "auto",
 		"useEditorconfig": true
 	},
-	"linter": { "enabled": true, "rules": { "recommended": true } },
+	"linter": { "enabled": true, "rules": { "recommended": true }, "domains": { "react": "recommended" } },
 	"css": { "linter": { "enabled": false }, "parser": { "tailwindDirectives": true } },
 	"javascript": {
 		"formatter": {

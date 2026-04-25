@@ -24,7 +24,8 @@
     "dev": "vite",
     "start": "yarn dev",
     "build": "tsc && vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "lint": "biome check"
   },
   "browserslist": {
     "production": [
@@ -43,12 +44,8 @@
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@typescript-eslint/eslint-plugin": "^8.59.0",
-    "@typescript-eslint/parser": "^8.59.0",
+    "@biomejs/biome": "^2.4.4",
     "@vitejs/plugin-react": "^6.0.1",
-    "eslint": "^10.2.1",
-    "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-react-refresh": "^0.5.2",
     "tailwindcss": "^4.2.4",
     "typescript": "^6.0.3",
     "vite": "^8.0.10"
