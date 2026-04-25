@@ -130,7 +130,7 @@ export default function MidiTransmitter() {
   const device = WebMidi.getOutputById(deviceId)
 
   return (
-    <div>
+    <>
       <div className="flex gap-3 flex-wrap items-end">
         <MidiDeviceSelector mode="output" label="Output" value={deviceId} onChange={(v) => setDeviceId(v)} />
         <div className="flex flex-col gap-1.5">
@@ -138,27 +138,33 @@ export default function MidiTransmitter() {
           <Select id="event" options={['', ...options]} value={method} onValueChange={(v) => setMethod(v)} />
         </div>
       </div>
-      {renderMethod(method, device as Output, state, (s) => setState(s))}
-    </div>
+      <MethodForm method={method} device={device as Output} state={state} setState={setState} />
+    </>
   )
 }
 
-const renderMethod = (method: string, device: Output, state: Record<string, unknown>, setState: (s: Record<string, unknown>) => void) => {
-  if (method === 'PSR S910 Controller') {
-    return <PsrS910 device={device} />
-  }
-  if (!method) {
-    return <></>
-  }
+function MethodForm({
+  method,
+  device,
+  state,
+  setState,
+}: {
+  method: string
+  device: Output
+  state: Record<string, unknown>
+  setState: (s: Record<string, unknown>) => void
+}) {
+  if (method === 'PSR S910 Controller') return <PsrS910 device={device} />
+  if (!method) return null
+
   const m = methods[method]
-  if (!m) {
-    return <div>Not implemented</div>
-  }
+  if (!m) return <p>Not implemented</p>
 
   const getState = (field: keyof typeof fieldTypes): string => {
     const val = field.split('.').reduce<unknown>((prev, curr) => (prev as Record<string, unknown>)?.[curr], state)
     return String(val ?? '')
   }
+
   const setFieldState = (field: keyof typeof fieldTypes, newFieldValue: unknown) => {
     const fieldParts = field.split('.')
     const newState = { ...state }
@@ -168,9 +174,7 @@ const renderMethod = (method: string, device: Output, state: Record<string, unkn
       if (i === fieldParts.length - 1) {
         last[fieldPart] = newFieldValue
       } else {
-        if (!last[fieldPart]) {
-          last[fieldPart] = {}
-        }
+        if (!last[fieldPart]) last[fieldPart] = {}
         last = last[fieldPart] as Record<string, unknown>
       }
     }
@@ -179,9 +183,7 @@ const renderMethod = (method: string, device: Output, state: Record<string, unkn
 
   const getField = (field: keyof typeof fieldTypes) => {
     const fieldType = fieldTypes[field]
-    if (!fieldType) {
-      return <div>Field type unknown for field {field}</div>
-    }
+    if (!fieldType) return <span>Field type unknown for field {field}</span>
     switch (fieldType) {
       case 'stringOrNumberOrArray':
         return <Input id={field} value={getState(field)} onChange={(e) => setFieldState(field, e.target.value.split(','))} />
@@ -193,7 +195,7 @@ const renderMethod = (method: string, device: Output, state: Record<string, unkn
             onChange={(e) =>
               setFieldState(
                 field,
-                e.target.value.split(',').map((v: string) => (!Number.isNaN(Number(v)) ? +v : v))
+                e.target.value.split(',').map((v: string) => (!Number.isNaN(Number(v)) ? +v : v)),
               )
             }
           />
@@ -207,24 +209,13 @@ const renderMethod = (method: string, device: Output, state: Record<string, unkn
           />
         )
       case 'number':
-        return (
-          <Input
-            id={field}
-            type="number"
-            value={getState(field)}
-            onChange={(e) => setFieldState(field, e.target.value)}
-          />
-        )
+        return <Input id={field} type="number" value={getState(field)} onChange={(e) => setFieldState(field, e.target.value)} />
       case 'array':
       case 'boolean':
       case 'string':
         return <Input id={field} value={getState(field)} onChange={(e) => setFieldState(field, e.target.value)} />
       default:
-        return (
-          <div>
-            Unknown field type {fieldType} for field {field}
-          </div>
-        )
+        return <span>Unknown field type {fieldType} for field {field}</span>
     }
   }
 
@@ -233,31 +224,22 @@ const renderMethod = (method: string, device: Output, state: Record<string, unkn
       onSubmit={handleFormSubmit(() => {
         try {
           console.log(state)
-          if (device) {
-            m.doIt(device, state)
-          }
+          if (device) m.doIt(device, state)
         } catch (e) {
           console.error(e)
-          // Toaster.show({
-          //   icon: 'warning-sign',
-          //   intent: Intent.DANGER,
-          //   message: e.message,
-          // })
         }
       })}
     >
       <Table>
         <TableBody>
-          {m.fields.map((field) => {
-            return (
-              <TableRow key={field}>
-                <TableCell className="cursor-default w-40">
-                  <label htmlFor={field}>{field}</label>
-                </TableCell>
-                <TableCell className="cursor-default">{getField(field)}</TableCell>
-              </TableRow>
-            )
-          })}
+          {m.fields.map((field) => (
+            <TableRow key={field}>
+              <TableCell className="w-40">
+                <Label htmlFor={field}>{field}</Label>
+              </TableCell>
+              <TableCell>{getField(field)}</TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
       <Button type="submit" className="mt-2">Send</Button>

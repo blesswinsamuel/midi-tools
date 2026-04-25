@@ -1,5 +1,4 @@
-import React from 'react'
-import { Output } from 'webmidi'
+import type { Output } from 'webmidi'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 
@@ -618,7 +617,7 @@ export default function PsrS910({ device }: { device: Output }) {
     }
   }
   return (
-    <div>
+    <>
       <div className="flex gap-3 flex-wrap">
         <div className="flex flex-col gap-1.5">
           <Label>Intro</Label>
@@ -698,6 +697,6 @@ export default function PsrS910({ device }: { device: Output }) {
           </div>
         ))}
       </div>
-    </div>
+    </>
   )
 }
