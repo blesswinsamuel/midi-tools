@@ -31,7 +31,7 @@ export default function Select<T>({
 
   return (
     <ShadcnSelect items={items} value={value || null} onValueChange={(v) => onValueChange?.(v ?? '')} disabled={disabled}>
-      <SelectTrigger id={id} className="w-full max-w-48">
+      <SelectTrigger id={id} className="w-full min-w-60 max-w-96">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent alignItemWithTrigger={false}>
